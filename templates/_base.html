@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/_base.css' %}">
+    
+    {% block title %}
+    <title>Meal Prep</title>
+    {% endblock title %}
+        
+    
+
+    
+    {% block css %}
+    {% endblock css %}
+        
+    
+</head>
+<body>
+    <header>
+        <h1>Meal Prep</h1>
+        <p>Your ultimate tool for healthy meal planning and calorie tracking!</p>
+    </header>
+    <main>
+        <p>Welcome to Meal Prep, the app that helps you keep track of your nutritional goals by managing ingredients, recipes, and meals. Simplify your life and eat healthier!</p>
+        <div class="cta">
+            <a href="/add-product">Add a Product</a>
+            <a href="/create-recipe">Create a Recipe</a>
+            <a href="/plan-meal">Plan a Meal</a>
+        </div>
+    </main>
+    <section>
+        
+        {% block content %}
+            
+        {% endblock content %}
+            
+    </section>
+    <footer>
+        <p>&copy; 2025 Meal Prep. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+
