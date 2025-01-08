@@ -1,0 +1,94 @@
+
+.container {
+    display: flex;
+    width: 80%;
+    height: 550px; /* Wysokość kontenera */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-list {
+    flex: 1; /* Zajmuje 50% szerokości */
+    overflow-y: auto; /* Przewijanie w pionie */
+    max-height: 100%; /* Maksymalna wysokość zgodna z rodzicem */
+    border-right: 1px solid #ddd;
+    padding: 10px;
+}
+
+.product-list h3 {
+    margin: 0;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.product-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.product-list li {
+    margin-bottom: 8px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.product-list li:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+.form-container {
+    flex: 1; /* Zajmuje 50% szerokości */
+    padding: 20px;
+}
+
+.form-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-container input,
+.form-container button {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 10px; /* Odstęp między przyciskami */
+    margin-top: 20px;
+}
+
+.form-buttons button {
+    flex: 1; /* Ustaw szerokość przycisków na równą */
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+    border: none;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}

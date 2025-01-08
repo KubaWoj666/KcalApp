@@ -41,7 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     #local
-    'core'
+    'core',
+
+    #3rd party
+    'widget_tweaks',
+    'bootstrap5',
 ]
 
 MIDDLEWARE = [
