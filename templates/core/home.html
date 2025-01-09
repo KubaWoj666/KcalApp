@@ -12,10 +12,11 @@
         twoje najnowsze przepisy
     </h1>
     <div class="recipes">
-        <p>Gulasz</p>
-        <p>Gulass</p>
-        <p>Gulass</p>
-        <p>Gulass</p>
+        
+        {% for recipe in recipes  %}
+            <a href="{% url 'recipe_detail' recipe.id %}"><p>{{recipe.name}}</p></a>
+        {% endfor %}
+            
     </div>
 {% endblock content %}
     
