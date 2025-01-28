@@ -1,10 +1,14 @@
-
+{% load widget_tweaks %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Recipe</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://kit.fontawesome.com/0645c31385.js" crossorigin="anonymous"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,24 +24,25 @@
         .container {
             display: flex;
             width: 90%;
-            height: 80%;
+            max-width: 1200px;
+            height: auto;
             border: 1px solid #ddd;
             border-radius: 8px;
             background-color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
         .product-list {
             flex: 1;
             border-right: 1px solid #ddd;
+            padding: 15px;
             overflow-y: auto;
-            padding: 10px;
         }
 
         .product-list h3 {
-            margin: 0;
-            margin-bottom: 10px;
             font-size: 1.5em;
+            margin-bottom: 15px;
         }
 
         .product-list ul {
@@ -47,18 +52,19 @@
         }
 
         .product-list li {
-            margin-bottom: 8px;
-            padding: 5px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
             background-color: #f9f9f9;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: background-color 0.2s;
         }
 
         .product-list li:hover {
-            background-color: #f0f0f0;
+            background-color: #e9ecef;
             cursor: pointer;
         }
 
@@ -67,27 +73,42 @@
             padding: 20px;
         }
 
-        .form-container form {
-            display: flex;
-            flex-direction: column;
+        .form-container h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
         }
 
         .form-container input,
         .form-container select,
-        .form-container button {
-            margin-bottom: 10px;
+        .form-container .button {
+            width: 100%;
             padding: 10px;
+            margin-bottom: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            box-sizing: border-box;
         }
 
-        .form-container button {
+        .products_and_grams{
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #product-select{
+            width: 60%
+        }
+
+        .form-container .button {
             background-color: #007bff;
             color: white;
             cursor: pointer;
         }
 
-        .form-container button:hover {
+        .form-container .button:hover {
             background-color: #0056b3;
         }
 
@@ -97,12 +118,9 @@
             align-items: center;
         }
 
+        .product-input select,
         .product-input input {
-            width: 30%;
-        }
-
-        .product-input select {
-            width: 60%;
+            width: 45%;
         }
 
         .selected-products {
@@ -110,8 +128,70 @@
         }
 
         .selected-products h4 {
+            font-size: 1.2em;
             margin-bottom: 10px;
         }
+
+        .selected-products ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .selected-products li {
+            padding: 0px 12px;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        /* Lista produktów wybranych do przepisu */
+#selected-products-list {
+    list-style: none; /* Usuń kropki listy */
+    padding: 0;
+    margin: 0;
+}
+
+#selected-products-list li {
+    display: flex; /* Flexbox dla wyrównania elementów */
+    justify-content: space-between; /* Tekst po lewej, przycisk po prawej */
+    align-items: center;
+    border: 1px solid #ddd; /* Obwódka elementu */
+    border-radius: 4px; /* Zaokrąglone rogi */
+    background-color: #f9f9f9; /* Tło elementu */
+    margin-bottom: 10px; /* Odstęp między elementami */
+    padding: 8px; /* Wewnętrzny odstęp */
+    transition: background-color 0.2s; /* Płynny efekt przy najechaniu */
+}
+
+/* Efekt hover dla elementów listy */
+#selected-products-list li:hover {
+    background-color: #f0f0f0; /* Jaśniejsze tło */
+}
+
+/* Stylizacja przycisku usuwania */
+.delete-button {
+    background-color: #ddd;
+    background: none; /* Bez tła */
+    border: none; /* Bez obramowania */
+    color: red; /* Kolor tekstu/ikony */
+    font-size: 1.2em; /* Rozmiar tekstu/ikony */
+    cursor: pointer; /* Zmiana kursora na wskaźnik */
+    transition: color 0.2s; /* Płynna zmiana koloru przy najechaniu */
+    display: flex; /* Wyśrodkowanie ikony wewnątrz przycisku */
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+}
+
+/* Efekt hover dla przycisku usuwania */
+.delete-button:hover {
+    color: darkred; /* Ciemniejszy czerwony przy najechaniu */
+}
+
     </style>
 </head>
 <body>
@@ -120,101 +200,53 @@
         <div class="product-list">
             <h3>Produkty</h3>
             <ul>
-                <li>Chicken</li>
-                <li>Rice</li>
-                <li>Tomatoes</li>
-                <li>Onion</li>
-                <li>Garlic</li>
+                {% for product in products %}
+                <li>{{ product.name }}</li>
+                {% endfor %}
             </ul>
         </div>
 
         <!-- Formularz -->
         <div class="form-container">
             <h3>Nowy Przepis</h3>
-            <form method="post" id="recipe-form">
-                <input type="text" name="recipe_name" placeholder="Nazwa przepisu" required>
-                
-                <div class="product-input">
-                    <select id="product-select">
-                        <option value="Chicken">Chicken</option>
-                        <option value="Rice">Rice</option>
-                        <option value="Tomatoes">Tomatoes</option>
-                        <option value="Onion">Onion</option>
-                        <option value="Garlic">Garlic</option>
-                    </select>
-                    <input type="number" name="grams" placeholder="Gramatura" required>
-                    <button type="button" id="add-product">Dodaj</button>
+            <form method="post" id="recipe-form" >
+                {% csrf_token %}
+                <div id="name"  class="form-group " {% if field.errors %} errors {% endif %} >
+                    <label > {{ form.name.label_tag }}</label>
+                    {{ form.name.errors }}
+                    {% render_field form.name class="form-control border-primary"  name="name" id="id_name"%}
                 </div>
 
-                <div class="selected-products">
+                <div class="products_and_grams">
+                    <div  id="product" class="form-group" {% if field.errors %} errors {% endif %} >
+                        <label > {{ form.product.label_tag }}</label>
+                        {{ form.product.errors }}
+                        {% render_field form.product class="form-control border-primary"  name="product" id="id_product"%}
+                    </div>
+                    <div  id="grams" class="form-group " {% if field.errors %} errors {% endif %} >
+                        <label > {{ form.grams.label_tag }}</label>
+                        {{ form.grams.errors }}
+                        {% render_field form.grams class="form-control border-primary"  name="grams" id="id_grams"%}
+                    </div>
+                </div>
+
+                <button type="submit" name="action" class="button" id="add-product" value="add_products">Dodaj Produkt</button>
+
+                <div  class="selected-products">
                     <h4>Wybrane produkty:</h4>
-                    <ul id="selected-products-list"></ul>
+                    <ul  id="selected-products-list"></ul>
                 </div>
 
-                <button type="submit">Zapisz przepis</button>
             </form>
+            <a href="{% url 'home' %}"><button type="submit" id="save-recipe"  class="button" value="save">Zapisz Przepis</button></a>
+
         </div>
     </div>
 
+    <script src="{% static 'js/add_recipe.js' %}"></script>
     <script>
-        document.getElementById("add-product").addEventListener("click", function () {
-            const productSelect = document.getElementById("product-select");
-            const gramsInput = document.querySelector("input[name='grams']");
-            const selectedProductsList = document.getElementById("selected-products-list");
-
-            const product = productSelect.value;
-            const grams = gramsInput.value;
-
-            if (product && grams) {
-                const listItem = document.createElement("li");
-                listItem.textContent = `${product} - ${grams}g`;
-                selectedProductsList.appendChild(listItem);
-
-                // Resetujemy wartość gramatury
-                gramsInput.value = "";
-            } else {
-                alert("Wybierz produkt i podaj gramaturę.");
-            }
-        });
+        document.body.addEventListener('htmx:configRequest', function(evt) {
+          evt.detail.headers['X-CSRFToken'] = '{{csrf_token}}'; 
+      });
     </script>
-</body>
-</html>
-
-
-<!-- {% extends '_base.html' %}
-{% load static %}
-{% load widget_tweaks %}
-
-
-{% block css %}
-    <link rel="stylesheet" href="{% static 'css/add_product.css' %}">
-{% endblock css %}
-    
-
-
-{% block content %}
-<form method="post">
-    {% csrf_token %}
-    <div  id="recipe" class="form-group " {% if field.errors %} errors {% endif %} >
-            <label > {{ form.recipe.label_tag }}</label>
-            {{ form.recipe.errors }}
-            {% render_field form.recipe class="form-control border-primary"  name="recipe" id="id_recipe"%}
-    </div>
-    <div  id="product" class="form-group " {% if field.errors %} errors {% endif %} >
-        <label > {{ form.product.label_tag }}</label>
-        {{ form.product.errors }}
-        {% render_field form.product class="form-control border-primary"  name="product" id="id_product"%}
-    </div>
-    <div  id="grams" class="form-group " {% if field.errors %} errors {% endif %} >
-        <label > {{ form.grams.label_tag }}</label>
-        {{ form.grams.errors }}
-        {% render_field form.grams class="form-control border-primary"  name="grams" id="id_grams"%}
-    </div>
-    <div class="form-buttons">
-        <button type="submit" id="save" name="save" value="save" class="btn btn-success">Save</button>
-        <button type="submit" id="save" name="save" value="save_add_another" class="btn btn-primary">Save and Add Another</button>
-    </div>
-
-</form>
-{% endblock content %}
-     -->
+</body

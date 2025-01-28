@@ -23,14 +23,20 @@ class Recipe(models.Model):
         total_fat = 0
         total_carbs = 0
 
-        for recipe_product in self.recipeproduct_set.all():
-            grams = recipe_product.grams
-            product = recipe_product.product
+        try:
+            for recipe_product in self.recipeproduct_set.all():
+                grams = recipe_product.grams
+                product = recipe_product.product
 
-            total_kcal += (product.kcal * grams/100)
-            total_protein += (product.protein * grams/100)
-            total_fat += (product.fat * grams/100)
-            total_carbs += (product.carbs * grams/100)
+                total_kcal += (product.kcal * grams/100)
+                total_protein += (product.protein * grams/100)
+                total_fat += (product.fat * grams/100)
+                total_carbs += (product.carbs * grams/100)
+        except:
+            total_kcal = 0
+            total_protein = 0
+            total_fat = 0
+            total_carbs = 0
 
         return {
             "kcal" : round(total_kcal, 2),
@@ -43,8 +49,8 @@ class Recipe(models.Model):
 
 class RecipeProduct(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    grams = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="grams")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
+    grams = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="grams", blank=True, null=True)
 
     def __str__(self):
         return f"{self.product.name} ({self.grams}g in {self.recipe.name})"
