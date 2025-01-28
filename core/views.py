@@ -51,7 +51,7 @@ def add_and_fetch_product(request):
 def recipe_detail(request, pk):
     try:
         recipe = Recipe.objects.get(id=pk)
-        totals = recipe.calculate_total
+        totals = recipe.calculate_total()
         print(totals)
         
     except Recipe.DoesNotExist:
@@ -61,6 +61,7 @@ def recipe_detail(request, pk):
         print(f"Error fetching products {e}")
 
     products = RecipeProduct.objects.filter(recipe=recipe)
+    print(products[0].product)
     
     context = {
         "recipe": recipe,

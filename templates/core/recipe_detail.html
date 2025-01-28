@@ -3,15 +3,63 @@
 
 
 {% block css %}
-    
+    <link rel="stylesheet" href="{% static 'css/recipe_detail.css' %}">
+
 {% endblock css %}
     
 
 {% block content %}
-    <h1>{{recipe.name}}</h1>
-    <p>{{recipe.products}}</p>
-    <p>{{totals}}</p>
-    <p>{{products}}</p>
+<div class="container">
+    <h1 class="recipe-name">{{recipe.name}} <button type="submit" class="recipe-name-edit-button"><i style="font-size:25px; margin-left:30px" class="fa-solid fa-pencil"></i></button></h1> 
+
+    <!-- Table for Used Products -->
+    <h2>Used Products </h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Grams</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.product }} </td>
+                <td>{{ product.grams }} g 
+                    <button type="submit" class="product-grams-edit-button"><i style="font-size:15px; margin-left:10px" class="fa-solid fa-pencil"></i></button>
+                    <button name="action" type="submit" class="delete-button"><i style="color:red" class="fa-solid fa-x"></i></button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Table for Nutritional Information -->
+    <h2>Nutritional Information</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                
+                <th>Calories</th>
+                <th>Protein</th>
+                <th>Fat</th>
+                <th>Carbs</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ recipe.calculate_total.kcal }}</td>
+                <td>{{ recipe.calculate_total.protein }}</td>
+                <td>{{ recipe.calculate_total.fat }}</td>
+                <td>{{ recipe.calculate_total.carbs }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="btn-back">
+        <a href="{% url 'home' %}"><i class="fa fa-arrow-left"></i> Back to Home</a>
+    </div>
+</div>
 
 {% endblock content %}
     
