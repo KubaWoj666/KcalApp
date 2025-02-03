@@ -1,9 +1,14 @@
 from django.shortcuts import render, redirect
-from django.http import Http404, JsonResponse
-from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_POST
+from django.http import Http404, JsonResponse, HttpResponse
+from django.shortcuts import get_object_or_404, get_list_or_404
 
 from .models import Product, Recipe, RecipeProduct
-from .forms import ProductForm, RecipeProductForm
+from .forms import ProductForm, RecipeProductForm, RecipeNameForm, RecipeGramsEditForm
+
+from django_htmx.http import HttpResponseClientRefresh
+
+
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
@@ -48,28 +53,66 @@ def add_and_fetch_product(request):
     return render(request, "core/add_product.html", context)
 
 
+#Recipe detail View
 def recipe_detail(request, pk):
-    try:
-        recipe = Recipe.objects.get(id=pk)
-        totals = recipe.calculate_total()
-        print(totals)
-        
-    except Recipe.DoesNotExist:
-        raise Http404("Recipe not found")
-    except Exception as e:
-        recipe = None
-        print(f"Error fetching products {e}")
+    # product_form = ProductForm()
+    form = RecipeNameForm()
+    grams_edit_form = RecipeGramsEditForm()
+
+    recipe = get_object_or_404(Recipe, id=pk)
+    totals = recipe.calculate_total()  
 
     products = RecipeProduct.objects.filter(recipe=recipe)
-    print(products[0].product)
+    message = None
+
+    #HTMX POST request for update product grams in recipe products
+    if request.htmx:
+        grams_edit_form = RecipeGramsEditForm(request.POST or None)
+        if grams_edit_form.is_valid():
+            product_name = request.POST.get("product-name")
+            grams = grams_edit_form.cleaned_data.get("grams")
+            product = products.filter(product__name=product_name).first()
+            if product:
+                product.grams = grams
+                product.save()
+                return HttpResponseClientRefresh()
+            else:
+                grams_edit_form.add_error("grams", "Product not found")       
+        else:
+            message = "wpisałeś ujemną bądź za duą liczbę"
+        
+    #POST request for update recipe name 
+    if request.method == "POST":
+        form = RecipeNameForm(request.POST or None, instance=recipe)
+        if form.is_valid():
+            form.save()
+        return redirect("recipe_detail", pk=pk )  
     
     context = {
         "recipe": recipe,
         "totals": totals,
-        "products": products
+        "products": products,
+        "form": form,
+        "grams_edit_form": grams_edit_form,
+        "message": message,
+        # "product_form": product_form
     }
 
     return render(request, "core/recipe_detail.html", context)
+
+@require_POST
+def delete_recipe_product_from_recipe(request, pk):
+    recipe = get_object_or_404(Recipe, id=pk)
+    product_name = request.POST.get("delete-button")
+
+    product_to_delete = RecipeProduct.objects.filter(recipe=recipe, product__name=product_name).first()
+
+    if not product_to_delete:
+        raise Http404("Product not found")
+   
+    product_to_delete.delete()
+        
+    return HttpResponseClientRefresh()
 
 
 def add_recipe(request):

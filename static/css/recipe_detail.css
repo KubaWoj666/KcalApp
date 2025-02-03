@@ -28,6 +28,10 @@ h1 {
     background-color: white;
 }
 
+#recipe-product-list{
+    width: 100%;
+}
+
 .table {
     margin-bottom: 30px;
 }
@@ -35,6 +39,15 @@ h1 {
 .table thead {
     background-color: #007bff;
     color: white;
+}
+
+.table_data{
+    display: flex;
+    justify-content: space-around;
+}
+
+.grams-input{
+    width: 65px;
 }
 
 .btn-back {

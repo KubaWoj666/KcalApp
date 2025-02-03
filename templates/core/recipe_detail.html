@@ -1,5 +1,6 @@
 {% extends '_base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 
 {% block css %}
@@ -10,10 +11,12 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="recipe-name">{{recipe.name}} <button type="submit" class="recipe-name-edit-button"><i style="font-size:25px; margin-left:30px" class="fa-solid fa-pencil"></i></button></h1> 
+    <h1 class="recipe-name">{{recipe.name}} <button type="button" class="recipe-name-edit-button" data-bs-toggle="modal" data-bs-target="#recipe-name-modal"><i style="font-size:25px; margin-left:30px" class="fa-solid fa-pencil"></i></button></h1> 
+   
 
     <!-- Table for Used Products -->
-    <h2>Used Products </h2>
+    <div id="recipe-product-list">
+    <!-- <h2>Used Products </h2><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-product-modal"><i class="fa-solid fa-plus"></i></button> -->
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -23,17 +26,47 @@
         </thead>
         <tbody>
             {% for product in products %}
-            <tr>
+            
+            <tr >
                 <td>{{ product.product }} </td>
-                <td>{{ product.grams }} g 
-                    <button type="submit" class="product-grams-edit-button"><i style="font-size:15px; margin-left:10px" class="fa-solid fa-pencil"></i></button>
-                    <button name="action" type="submit" class="delete-button"><i style="color:red" class="fa-solid fa-x"></i></button>
+                <td class="table_data">{{ product.grams }} g 
+                    <form hx-post="{% url 'recipe_detail' pk=recipe.id %}" hx-swap="none" hx-push-url="false">
+                        {% csrf_token %}
+                        <input type="hidden" name="recipe-id" value="{{recipe.id}}">
+                        <input type="hidden" name="product-name" value="{{product.product}}">
+                        
+                        <!-- <h1>
+                            {% if message %}
+                            {{message}}
+                        {% endif %}
+                        </h1> -->
+
+                        <div  id="grams" class="form-group " {% if field.errors %} errors {% endif %} >
+                            <!-- <label > {{ grams_edit_form.grams.label_tag }}</label> -->
+                            {{ grams_edit_form.grams.errors }}
+                            {% render_field grams_edit_form.grams class="form-control border-primary w-50"   name="grams" id="id_name"%}
+                            
+                        </div>
+                            
+                        <!-- <input class="grams-input" type="number" step="1" name="product-grams" value="{{product.grams}}"> -->
+                        <!-- <button type="submit" class="product-grams-edit-button"><i style="font-size:15px; margin-left:10px" class="fa-solid fa-pencil"></i></button> -->
+                    </form>
+                    <button 
+                        name="delete-button"
+                        value="{{product.product}}"
+                        hx-post="{% url 'delete_recipe_product' recipe.id %}"
+                        hx-confirm="Are you sure that you wat to delete {{product.product}}"
+                        hx-target="#recipe-product-list"
+                        type="submit" class="delete-button" >
+                        <i style="color:red" class="fa-solid fa-x"></i>
+                    </button>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
+</div>
+    
     <!-- Table for Nutritional Information -->
     <h2>Nutritional Information</h2>
     <table class="table table-bordered">
@@ -60,6 +93,92 @@
         <a href="{% url 'home' %}"><i class="fa fa-arrow-left"></i> Back to Home</a>
     </div>
 </div>
+
+
+
+
+<!-- Recipe name Modal -->
+<div class="modal fade" id="recipe-name-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post">
+            {% csrf_token %}
+            <div  id="name" class="form-group " {% if field.errors %} errors {% endif %} >
+                <label > {{ form.name.label_tag }}</label>
+                {{ form.name.errors }}
+                {% render_field form.name class="form-control border-primary"  name="name" id="id_name"%}
+        </div>
+        </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Add Product Modal -->
+<!-- <div class="modal fade" id="add-product-modal" tabindex="-1" aria-labelledby="add-product-modal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-container">
+                <h3>Dodaj Produkt</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div  id="name" class="form-group " {% if field.errors %} errors {% endif %} >
+                            <label > {{ product_form.name.label_tag }}</label>
+                            {{ product_form.name.errors }}
+                            {% render_field product_form.name class="form-control border-primary"  name="name" id="id_name"%}
+                    </div>
+                    <div  id="kcal" class="form-group " {% if field.errors %} errors {% endif %} >
+                        <label > {{ product_form.kcal.label_tag }}</label>
+                        {{ product_form.kcal.errors }}
+                        {% render_field product_form.kcal class="form-control border-primary"  name="kcal" id="id_kcal"%}
+                    </div>
+                    <div  id="protein" class="form-group " {% if field.errors %} errors {% endif %} >
+                        <label > {{ product_form.protein.label_tag }}</label>
+                        {{ product_form.protein.errors }}
+                        {% render_field product_form.protein class="form-control border-primary"  name="protein" id="id_protein"%}
+                    </div>
+                    <div  id="fat" class="form-group " {% if field.errors %} errors {% endif %} >
+                        <label > {{ product_form.fat.label_tag }}</label>
+                        {{ product_form.fat.errors }}
+                        {% render_field product_form.fat class="form-control border-primary"  name="fat" id="id_fat"%}
+                    </div>
+                    <div  id="carbs" class="form-group " {% if field.errors %} errors {% endif %} >
+                        <label > {{ product_form.carbs.label_tag }}</label>
+                        {{ product_form.carbs.errors }}
+                        {% render_field product_form.carbs class="form-control border-primary"  name="carbs" id="id_carbs"%}
+                    </div>
+                    
+                    <div class="form-buttons">
+                        <button type="submit"  name="save" value="save" class="btn btn-success">Save</button>
+                        <button type="submit"  name="save" value="save_add_another" class="btn btn-primary">Save and Add Another</button>
+                    </div>
+            
+                </form>
+            </div>
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div> -->
 
 {% endblock content %}
     

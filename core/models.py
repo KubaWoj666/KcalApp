@@ -49,8 +49,8 @@ class Recipe(models.Model):
 
 class RecipeProduct(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
-    grams = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="grams", blank=True, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    grams = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="grams")
 
     def __str__(self):
         return f"{self.product.name} ({self.grams}g in {self.recipe.name})"
