@@ -1,0 +1,38 @@
+
+{% load widget_tweaks %}
+  <!-- Add Product Modal -->
+  <div class="modal fade" id="add-product-modal" tabindex="-1" aria-labelledby="add-product-modal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Add Product</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-container">
+                
+                <form method="post" action="{% url 'add_product_to_recipe' recipe.id %}">
+                    {% csrf_token %}
+                    <div  id="product" class="form-group " {% if field.errors %} errors {% endif %} >
+                            <label > {{ add_product_form.product.label_tag }}</label>
+                            {{ add_product_form.product.errors }}
+                            {% render_field add_product_form.product class="form-control border-primary"  name="product" id="id_product"%}
+                    </div>
+                    <div  id="grams" class="form-group " {% if field.errors %} errors {% endif %} >
+                        <label > {{ add_product_form.grams.label_tag }}</label>
+                        {{ add_product_form.grams.errors }}
+                        {% render_field add_product_form.grams class="form-control border-primary"  name="grams" id="id_grams"%}
+                    </div>
+                    
+                    <button type="submit" style="background-color:  #27352A; margin-top: 3px" class="btn btn-dark ">Save changes</button>
+
+                </form>
+            </div>
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>

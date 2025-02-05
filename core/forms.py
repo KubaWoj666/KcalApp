@@ -9,7 +9,6 @@ class ProductForm(forms.ModelForm):
         exclude = ["id"]
 
 
-
 class RecipeProductForm(forms.ModelForm):
     name = forms.CharField(max_length=150)
     product = forms.ModelChoiceField(
@@ -49,3 +48,13 @@ class RecipeGramsEditForm(forms.Form):
             self.add_error("grams", "❌ Maksymalna gramatura to 10 000 g!")
 
         return cleaned_data
+
+class AddProductToRecipeForm(forms.ModelForm):
+    product = forms.ModelChoiceField(
+        queryset=Product.objects.all(),
+        empty_label="Wybierz produkt",  # Tekst placeholdera
+        widget=forms.Select(attrs={"class": "form-control border-primary"})
+    )
+    class Meta:
+        model = RecipeProduct
+        fields = ["product", "grams"]

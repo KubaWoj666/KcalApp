@@ -4,7 +4,7 @@ from django.http import Http404, JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, get_list_or_404
 
 from .models import Product, Recipe, RecipeProduct
-from .forms import ProductForm, RecipeProductForm, RecipeNameForm, RecipeGramsEditForm
+from .forms import ProductForm, RecipeProductForm, RecipeNameForm, RecipeGramsEditForm, AddProductToRecipeForm
 
 from django_htmx.http import HttpResponseClientRefresh
 
@@ -55,7 +55,8 @@ def add_and_fetch_product(request):
 
 #Recipe detail View
 def recipe_detail(request, pk):
-    # product_form = ProductForm()
+    add_product_form = AddProductToRecipeForm()
+    product_form = ProductForm()
     form = RecipeNameForm()
     grams_edit_form = RecipeGramsEditForm()
 
@@ -95,7 +96,8 @@ def recipe_detail(request, pk):
         "form": form,
         "grams_edit_form": grams_edit_form,
         "message": message,
-        # "product_form": product_form
+        "product_form": product_form,
+        "add_product_form": add_product_form
     }
 
     return render(request, "core/recipe_detail.html", context)
@@ -114,6 +116,20 @@ def delete_recipe_product_from_recipe(request, pk):
         
     return HttpResponseClientRefresh()
 
+@require_POST
+def add_product_to_recipe(request, pk):
+    recipe = get_object_or_404(Recipe, id=pk)
+    
+    form = AddProductToRecipeForm(request.POST or None)
+    if form.is_valid():
+        form.save(commit=False)
+        product_obj = form.cleaned_data.get("product")
+        grams = form.cleaned_data.get("grams")
+        RecipeProduct.objects.create(recipe=recipe, product=product_obj, grams=grams)
+        
+    return redirect("recipe_detail", pk=pk)
+
+    
 
 def add_recipe(request):
     form = RecipeProductForm()
