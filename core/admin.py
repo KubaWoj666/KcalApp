@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import Product, Recipe, RecipeProduct
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ["name", "kcal", "protein", "fat", "carbs"]
+    list_display = [ "id", "name", "kcal", "protein", "fat", "carbs"]
 
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ["name", "total_kcal"]

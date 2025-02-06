@@ -1,10 +1,10 @@
 
     <h3>Produkty</h3>
-    <ul>
+    <ul id="product_list">
         
         {% if products %}
             {% for product in products  %}
-                <li>{{product.name}} - kacl/100g:{{product.kcal}}</li>
+                <li product-name="{{product.name}}">{{product.name}} - {{product.kcal}} kcal/100g</li>
             {% endfor %}
         {% else %}
             <p>Nie ma jeszcze żadnych produktów </p>

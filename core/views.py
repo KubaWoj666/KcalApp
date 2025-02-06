@@ -133,6 +133,7 @@ def add_product_to_recipe(request, pk):
 
 def add_recipe(request):
     form = RecipeProductForm()
+    add_product_form = ProductForm()
     data = {}
 
     try:
@@ -166,11 +167,11 @@ def add_recipe(request):
                 
 
             return JsonResponse(data)
-            
-       
+                
     context = {
         "form": form,
-        "products": products
+        "products": products,
+        "add_product_form": add_product_form,
     }
 
     return render(request, "core/add_recipe.html", context)
@@ -191,3 +192,24 @@ def delete_from_product_list(request):
         return JsonResponse({"success": True})
 
     return JsonResponse({"success": False}, status=400)
+
+
+@require_POST
+def create_product_from_add_recipe_template(request):
+    data = {}
+    if is_ajax:
+        print("AJAX")
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            new_product = form.save()
+            return JsonResponse({"success": True, 
+                                 "new_product": {
+                                     "id": new_product.id,
+                                     "name": new_product.name,
+                                     "kcal": new_product.kcal
+                                 }})
+        return JsonResponse({"message": "Produkt dodany!"})  # Zwróć JSON zamiast redirecta
+
+    return JsonResponse({"error": "Niepoprawne dane"}, status=400)
+
+

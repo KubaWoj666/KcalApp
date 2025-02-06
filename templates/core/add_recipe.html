@@ -8,7 +8,8 @@
     <title>Create Recipe</title>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://kit.fontawesome.com/0645c31385.js" crossorigin="anonymous"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -38,18 +39,28 @@
             border-right: 1px solid #ddd;
             padding: 15px;
             overflow-y: auto;
+            max-height: 400px; /* Możesz dostosować wysokość */
         }
+        
+        /* Stylowanie listy, aby była przewijalna */
+        .product-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 350px; /* Maksymalna wysokość */
+            overflow-y: auto; /* Włączenie przewijania */
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
 
         .product-list h3 {
             font-size: 1.5em;
             margin-bottom: 15px;
         }
 
-        .product-list ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+        
 
         .product-list li {
             padding: 8px 12px;
@@ -198,12 +209,7 @@
     <div class="container">
         <!-- Lista produktów -->
         <div class="product-list">
-            <h3>Produkty</h3>
-            <ul>
-                {% for product in products %}
-                <li>{{ product.name }}</li>
-                {% endfor %}
-            </ul>
+            {% include 'core/partials/product_list.html' %}
         </div>
 
         <!-- Formularz -->
@@ -223,6 +229,9 @@
                         {{ form.product.errors }}
                         {% render_field form.product class="form-control border-primary"  name="product" id="id_product"%}
                     </div>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" name="next" value="DUPa">
+                        Add new product
+                      </button>
                     <div  id="grams" class="form-group " {% if field.errors %} errors {% endif %} >
                         <label > {{ form.grams.label_tag }}</label>
                         {{ form.grams.errors }}
@@ -235,6 +244,7 @@
                 <div  class="selected-products">
                     <h4>Wybrane produkty:</h4>
                     <ul  id="selected-products-list"></ul>
+                    
                 </div>
 
             </form>
@@ -243,7 +253,25 @@
         </div>
     </div>
 
+    <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          {% include 'core/partials/add_new_product.html' with form=add_product_form %}
+        </div>
+      </div>
+    </div>
+  </div>
+
     <script src="{% static 'js/add_recipe.js' %}"></script>
+    <script src="{% static 'js/add_product_from_add_recipe_template.js' %}"></script>
+
+
     <script>
         document.body.addEventListener('htmx:configRequest', function(evt) {
           evt.detail.headers['X-CSRFToken'] = '{{csrf_token}}'; 
