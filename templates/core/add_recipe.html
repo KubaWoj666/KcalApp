@@ -1,220 +1,30 @@
+{% extends '_base.html' %}
 {% load widget_tweaks %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Recipe</title>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://kit.fontawesome.com/0645c31385.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f8f9fa;
-        }
 
-        .container {
-            display: flex;
-            width: 90%;
-            max-width: 1200px;
-            height: auto;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
 
-        .product-list {
-            flex: 1;
-            border-right: 1px solid #ddd;
-            padding: 15px;
-            overflow-y: auto;
-            max-height: 400px; /* Możesz dostosować wysokość */
-        }
-        
-        /* Stylowanie listy, aby była przewijalna */
-        .product-list ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 350px; /* Maksymalna wysokość */
-            overflow-y: auto; /* Włączenie przewijania */
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/add_recipe.css' %}">
+{% endblock css %}
+    
+   
 
-        .product-list h3 {
-            font-size: 1.5em;
-            margin-bottom: 15px;
-        }
+{% block content %}
 
-        
-
-        .product-list li {
-            padding: 8px 12px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.2s;
-        }
-
-        .product-list li:hover {
-            background-color: #e9ecef;
-            cursor: pointer;
-        }
-
-        .form-container {
-            flex: 2;
-            padding: 20px;
-        }
-
-        .form-container h3 {
-            font-size: 1.8em;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-container input,
-        .form-container select,
-        .form-container .button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .products_and_grams{
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #product-select{
-            width: 60%
-        }
-
-        .form-container .button {
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-        }
-
-        .form-container .button:hover {
-            background-color: #0056b3;
-        }
-
-        .product-input {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .product-input select,
-        .product-input input {
-            width: 45%;
-        }
-
-        .selected-products {
-            margin-top: 20px;
-        }
-
-        .selected-products h4 {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-
-        .selected-products ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .selected-products li {
-            padding: 0px 12px;
-            margin-bottom: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-        }
-
-        /* Lista produktów wybranych do przepisu */
-#selected-products-list {
-    list-style: none; /* Usuń kropki listy */
-    padding: 0;
-    margin: 0;
-}
-
-#selected-products-list li {
-    display: flex; /* Flexbox dla wyrównania elementów */
-    justify-content: space-between; /* Tekst po lewej, przycisk po prawej */
-    align-items: center;
-    border: 1px solid #ddd; /* Obwódka elementu */
-    border-radius: 4px; /* Zaokrąglone rogi */
-    background-color: #f9f9f9; /* Tło elementu */
-    margin-bottom: 10px; /* Odstęp między elementami */
-    padding: 8px; /* Wewnętrzny odstęp */
-    transition: background-color 0.2s; /* Płynny efekt przy najechaniu */
-}
-
-/* Efekt hover dla elementów listy */
-#selected-products-list li:hover {
-    background-color: #f0f0f0; /* Jaśniejsze tło */
-}
-
-/* Stylizacja przycisku usuwania */
-.delete-button {
-    background-color: #ddd;
-    background: none; /* Bez tła */
-    border: none; /* Bez obramowania */
-    color: red; /* Kolor tekstu/ikony */
-    font-size: 1.2em; /* Rozmiar tekstu/ikony */
-    cursor: pointer; /* Zmiana kursora na wskaźnik */
-    transition: color 0.2s; /* Płynna zmiana koloru przy najechaniu */
-    display: flex; /* Wyśrodkowanie ikony wewnątrz przycisku */
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    padding: 0;
-}
-
-/* Efekt hover dla przycisku usuwania */
-.delete-button:hover {
-    color: darkred; /* Ciemniejszy czerwony przy najechaniu */
-}
-
-    </style>
-</head>
-<body>
     <div class="container">
         <!-- Lista produktów -->
-        <div class="product-list">
+        <div class="product-list" style="max-width: 100%; white-space: nowrap; overflow: hidden;">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="max-width: 100%; margin-left: 167px; position: absolute;">
+                <i class="fa-solid fa-plus"></i> Create new product
+            </button>
             {% include 'core/partials/product_list.html' %}
         </div>
 
         <!-- Formularz -->
         <div class="form-container">
-            <h3>Nowy Przepis</h3>
+            
+            <h3>Create Recipe</h3> 
+            
             <form method="post" id="recipe-form" >
                 {% csrf_token %}
                 <div id="name"  class="form-group " {% if field.errors %} errors {% endif %} >
@@ -229,9 +39,7 @@
                         {{ form.product.errors }}
                         {% render_field form.product class="form-control border-primary"  name="product" id="id_product"%}
                     </div>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" name="next" value="DUPa">
-                        Add new product
-                      </button>
+                   
                     <div  id="grams" class="form-group " {% if field.errors %} errors {% endif %} >
                         <label > {{ form.grams.label_tag }}</label>
                         {{ form.grams.errors }}
@@ -277,4 +85,5 @@
           evt.detail.headers['X-CSRFToken'] = '{{csrf_token}}'; 
       });
     </script>
-</body
+
+{% endblock content %}

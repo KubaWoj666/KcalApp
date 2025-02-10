@@ -10,6 +10,9 @@
     
 
 {% block content %}
+{% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+{% endif %}
 <div class="container">
     <h1 class="recipe-name">{{recipe.name}} <button type="button" class="recipe-name-edit-button" data-bs-toggle="modal" data-bs-target="#recipe-name-modal"><i style="font-size:25px; margin-left:30px" class="fa-solid fa-pencil"></i></button></h1> 
    

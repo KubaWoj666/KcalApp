@@ -7,6 +7,8 @@ from .models import Product, Recipe, RecipeProduct
 from .forms import ProductForm, RecipeProductForm, RecipeNameForm, RecipeGramsEditForm, AddProductToRecipeForm
 
 from django_htmx.http import HttpResponseClientRefresh
+from django.db.utils import IntegrityError
+
 
 
 
@@ -31,7 +33,6 @@ def add_and_fetch_product(request):
         products = Product.objects.all().order_by("name")
     except Exception as e:
         products = []
-        print(f"Error fetching products {e}")
 
     if request.method == "POST":
         form = ProductForm(request.POST or None)
@@ -102,6 +103,7 @@ def recipe_detail(request, pk):
 
     return render(request, "core/recipe_detail.html", context)
 
+
 @require_POST
 def delete_recipe_product_from_recipe(request, pk):
     recipe = get_object_or_404(Recipe, id=pk)
@@ -116,22 +118,48 @@ def delete_recipe_product_from_recipe(request, pk):
         
     return HttpResponseClientRefresh()
 
+
 @require_POST
 def add_product_to_recipe(request, pk):
+    """Adding product to recipe"""
     recipe = get_object_or_404(Recipe, id=pk)
-    
     form = AddProductToRecipeForm(request.POST or None)
-    if form.is_valid():
-        form.save(commit=False)
-        product_obj = form.cleaned_data.get("product")
-        grams = form.cleaned_data.get("grams")
-        RecipeProduct.objects.create(recipe=recipe, product=product_obj, grams=grams)
-        
+    products = RecipeProduct.objects.filter(recipe=recipe)
+    grams_edit_form = RecipeGramsEditForm()
+
+    if request.method == "POST":
+        if form.is_valid():
+            product_obj = form.cleaned_data.get("product")
+            grams = form.cleaned_data.get("grams")
+
+            existing_product = RecipeProduct.objects.filter(recipe=recipe, product=product_obj).exists()
+            if existing_product:
+                # Error: product already on recipe
+                return render(request, "core/recipe_detail.html", {
+                    "recipe": recipe,
+                    "products":products,
+                    "grams_edit_form": grams_edit_form,
+                    "add_product_form": form,
+                    "error": "Product is already in Recipe"
+                })
+
+            try:
+                RecipeProduct.objects.create(recipe=recipe, product=product_obj, grams=grams)
+                return redirect("recipe_detail", pk=pk)  
+            
+            except IntegrityError:
+                return render(request, "core/recipe_detail.html", {
+                    "recipe": recipe,
+                    "products": products,
+                    "add_product_form": form,
+                    "grams_edit_form": grams_edit_form,
+                    "error": "Database error while adding product"
+                })
+
     return redirect("recipe_detail", pk=pk)
 
-    
 
-def add_recipe(request):
+def create_recipe(request):
     form = RecipeProductForm()
     add_product_form = ProductForm()
     data = {}
@@ -140,7 +168,6 @@ def add_recipe(request):
         products = Product.objects.all().order_by("name")
     except Exception as e:
         products = []
-        print(f"Error fetching products {e}")
 
     if is_ajax:
         form = RecipeProductForm(request.POST or None)
@@ -148,24 +175,23 @@ def add_recipe(request):
         if form.is_valid(): 
             recipe_name = form.cleaned_data.get("name")
             recipe_id = request.session.get("current_recipe_id")
-            if not recipe_id:
-                
+
+            if not recipe_id:           
                 recipe = Recipe.objects.create(name=recipe_name)
                 request.session["current_recipe_id"] = recipe.id
+
             else:
                 recipe = get_object_or_404(Recipe, id=recipe_id)
             
             if action == "add_products":
-                print(action)
                 product = form.cleaned_data.get("product")
                 grams = form.cleaned_data.get("grams")
                 RecipeProduct.objects.create(recipe=recipe, product=product, grams=grams)
 
+                data["success"] = True
                 data["recipe_name"] = recipe_name
                 data["product"] = product.name
                 data["grams"] = grams
-                
-
             return JsonResponse(data)
                 
     context = {
@@ -176,29 +202,38 @@ def add_recipe(request):
 
     return render(request, "core/add_recipe.html", context)
 
-
+@require_POST
 def delete_from_product_list(request):
-
     if is_ajax:
         recipe_name = request.POST.get("recipe-name")
         product = request.POST.get("product")
         grams = request.POST.get("grams")
 
-        recipe = get_object_or_404(Recipe, name=recipe_name)
-        product = get_object_or_404(Product, name=product)
-        product_to_delete = RecipeProduct.objects.get(recipe=recipe, product=product, grams=grams)
-        product_to_delete.delete()
+        if not all([recipe_name, product, grams]):
+            return JsonResponse({"success": False, "error": "Invalid Data"}, status=400)
 
-        return JsonResponse({"success": True})
+        try:
+            recipe = get_object_or_404(Recipe, name=recipe_name)
+            product = get_object_or_404(Product, name=product)
+            product_to_delete = RecipeProduct.objects.get(recipe=recipe, product=product, grams=grams)
+            if not product_to_delete:
+                return JsonResponse({"success": False, "error": "Product doesn't Exist "}, status=400)
+            
+            product_to_delete.delete()
+            return JsonResponse({"success": True})
+        except IntegrityError:
+            return JsonResponse({"success": False, "error": "Błąd bazy danych"}, status=500)
+
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=500)
 
     return JsonResponse({"success": False}, status=400)
 
 
 @require_POST
 def create_product_from_add_recipe_template(request):
-    data = {}
+    
     if is_ajax:
-        print("AJAX")
         form = ProductForm(request.POST)
         if form.is_valid():
             new_product = form.save()
@@ -208,8 +243,6 @@ def create_product_from_add_recipe_template(request):
                                      "name": new_product.name,
                                      "kcal": new_product.kcal
                                  }})
-        return JsonResponse({"message": "Produkt dodany!"})  # Zwróć JSON zamiast redirecta
+        return JsonResponse({"success": False, "errors": form.errors}, status=400)
 
-    return JsonResponse({"error": "Niepoprawne dane"}, status=400)
-
-
+    return JsonResponse({"error": "Metoda niedozwolona"}, status=405)
