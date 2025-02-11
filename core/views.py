@@ -246,3 +246,52 @@ def create_product_from_add_recipe_template(request):
         return JsonResponse({"success": False, "errors": form.errors}, status=400)
 
     return JsonResponse({"error": "Metoda niedozwolona"}, status=405)
+
+
+def plan_meal_view(request):
+    recipes = Recipe.objects.all()
+    products = Product.objects.all()
+
+
+    context = {
+        "recipes": recipes,
+        "products": products
+    }
+
+    return render(request, "core/plan_meal.html", context)
+
+
+def get_recipe(request, pk):
+    recipe = get_object_or_404(Recipe, id=pk)
+    
+    ingredients = RecipeProduct.objects.filter(recipe=recipe).select_related("product")
+
+    totals = recipe.calculate_total()
+
+    data = {
+        "name": recipe.name,
+        "ingredients": [
+            {
+                "product": item.product.name,
+                "grams": item.grams,
+                "kcal": item.product.kcal,
+                "protein": item.product.protein,
+                "fat": item.product.fat,
+                "carbs": item.product.carbs,
+            }
+            for item in ingredients
+        ],
+        "totals": totals
+    }
+
+    return JsonResponse(data)
+
+
+def get_product(request, pk):
+    product = get_object_or_404(Product, id=pk)
+
+    data = {
+        "product": product
+    }
+
+    return JsonResponse(data)

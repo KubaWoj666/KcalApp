@@ -1,0 +1,50 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+}
+
+.recipe-selection {
+    width: 30%;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.recipe-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.recipe-list li {
+    margin-bottom: 10px;
+}
+
+.recipe-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #27352A;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.recipe-btn:hover {
+    background-color: #1e2b21;
+}
+
+.recipe-details {
+    width: 65%;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+#portion-input {
+    width: 50px;
+    margin-left: 10px;
+}
