@@ -9,7 +9,7 @@ const portionTotals = document.getElementById("portion-totals")
 
 
 // const actionValue = clickedButton;
-
+ 
 
 
 recipesButtons.forEach(button => {
@@ -83,36 +83,16 @@ function calculatePortion(response){
         Object.entries(response.totals).forEach(([key, value]) => {
             td = document.createElement("td")
             portionTotals.appendChild(td)
-            td.textContent = (value/portion).toFixed(2)
-            
+            td.id = "portion-table-data"
+            td.textContent = (value/portion).toFixed(2)            
         });
+
+        const liExtra = document.getElementById("li-extra-ingredient")
+        console.log(liExtra)
     })
 }
 
 
-
-// const addExtraProductButton = document.getElementById("add-extra")
-// const extraProduct = document.getElementById("extra-ingredient")
-
-// extraProduct.addEventListener("change", function (e) {
-//     const selectedOption = extraIngredientSelect.options[extraIngredientSelect.selectedIndex];
-
-//     // Pobiera wartości atrybutów `data-*`
-//     const productId = selectedOption.value;
-//     const productName = selectedOption.textContent;
-//     const kcal = selectedOption.getAttribute("data-kcal");
-//     const protein = selectedOption.getAttribute("data-protein");
-//     const fat = selectedOption.getAttribute("data-fat");
-//     const carbs = selectedOption.getAttribute("data-carbs");
-
-//     // Wyświetla dane w konsoli (możesz je wykorzystać w UI)
-//     console.log(`Produkt: ${productName}`);
-//     console.log(`ID: ${productId}`);
-//     console.log(`Kalorie: ${kcal}`);
-//     console.log(`Białko: ${protein}`);
-//     console.log(`Tłuszcz: ${fat}`);
-//     console.log(`Węglowodany: ${carbs}`);
-// })
 
 
 // Pobieranie elementów
@@ -120,12 +100,17 @@ const extraIngredientSelect = document.getElementById("extra-ingredient");
 const extraGramsInput = document.getElementById("extra-grams");
 const addExtraButton = document.getElementById("add-extra");
 const ingredientList = document.getElementById("ingredient-list");
+const tableTotalsWithExtra = document.getElementById("portion-totals-with-extra-ingredient")
 
 // Obsługa kliknięcia "Add"
 addExtraButton.addEventListener("click", function () {
     // Pobranie wybranego produktu
     const selectedOption = extraIngredientSelect.options[extraIngredientSelect.selectedIndex];
 
+    if (document.getElementById("li-extra-ingredient")) {
+        alert("❌ Możesz dodać tylko jeden dodatkowy składnik!");
+        return;
+    }
     // Sprawdzenie, czy wybrano produkt
     if (!selectedOption.value) {
         alert("Wybierz składnik!");
@@ -146,15 +131,90 @@ addExtraButton.addEventListener("click", function () {
     const proteinPer100g = parseFloat(selectedOption.getAttribute("data-protein"));
     const fatPer100g = parseFloat(selectedOption.getAttribute("data-fat"));
     const carbsPer100g = parseFloat(selectedOption.getAttribute("data-carbs"));
+    
 
     // Przeliczenie wartości na podaną ilość gramów
     const kcal = ((kcalPer100g / 100) * grams).toFixed(2);
     const protein = ((proteinPer100g / 100) * grams).toFixed(2);
     const fat = ((fatPer100g / 100) * grams).toFixed(2);
     const carbs = ((carbsPer100g / 100) * grams).toFixed(2);
-
+    
+    
     // Dodanie produktu do listy
     const li = document.createElement("li");
-    li.innerHTML = `<strong>${productName}</strong>: ${grams}g - ${kcal} kcal, ${protein}g protein, ${fat}g fat, ${carbs}g carbs`;
+    li.id = "li-extra-ingredient"
+    li.innerHTML = `<strong>${productName}</strong>: ${grams}g - ${kcal} kcal, ${protein}g protein, ${fat}g fat, ${carbs}g carbs <button id="extra-ingredient-delete-button"><i style="color: red;" class="fa-solid fa-x"></i></button>`;
     ingredientList.appendChild(li);
+
+
+    const portionTableData = document.querySelectorAll("#portion-table-data")
+    const values = [kcal, protein, fat, carbs]; // Tablica wartości
+
+    portionTableData.forEach((element, index) => {
+        if (index < values.length) { // Upewniamy się, że nie wychodzimy poza zakres
+            td = document.createElement("td")
+            td.id = "table-data-extras"
+            tableTotalsWithExtra.appendChild(td)
+            td.textContent = (parseFloat(element.textContent) + parseFloat(values[index])).toFixed(2);
+        }
+    });
+
 });
+
+document.addEventListener("click", function (e) {
+    // Sprawdzamy, czy kliknięty element to przycisk usuwania
+    if (e.target.closest("#extra-ingredient-delete-button")) {
+        e.preventDefault();
+
+        
+        const liToRemove = e.target.closest("li"); // Pobieramy najbliższy element <li>
+        
+        if (liToRemove) {
+            console.log("Usuwany składnik:", liToRemove.textContent);
+            const liText = liToRemove.textContent; // Pobieramy tekst przed usunięciem
+            liToRemove.remove(); // Usuwamy element z listy
+            updateTableAfterRemoval(liText); // Przekazujemy usunięty tekst do funkcji
+        }
+    }
+});
+
+function updateTableAfterRemoval(liText) {
+    const portionTableWithExtra = document.getElementById("portion-totals-with-extra-ingredient")
+    while(portionTableWithExtra.firstChild) portionTableWithExtra.removeChild(portionTableWithExtra.firstChild);
+
+    // const portionTableData = document.querySelectorAll("#table-data-extras");
+//     console.log("Porcja przed aktualizacją:", portionTableData);
+
+
+    
+
+//     // Zerujemy wartości do odjęcia
+//     let valuesToSubtract = [0, 0, 0, 0]; // kcal, protein, fat, carbs
+
+//     // Wyszukujemy wartości do odjęcia na podstawie tekstu usuniętego składnika
+//     const values = liText.match(/([\d\.]+) kcal, ([\d\.]+)g protein, ([\d\.]+)g fat, ([\d\.]+)g carbs/);
+//     console.log("OPAAAA")
+//     console.log(values)
+//     if (values) {
+//         console.log("Parsowane wartości:", values);
+
+//         // Pobieramy wartości jako liczby i zapisujemy w tablicy
+//         valuesToSubtract[0] = parseFloat(values[1]) || 0; // kcal
+//         valuesToSubtract[1] = parseFloat(values[2]) || 0; // protein
+//         valuesToSubtract[2] = parseFloat(values[3]) || 0; // fat
+//         valuesToSubtract[3] = parseFloat(values[4]) || 0; // carbs
+//     }
+
+//     console.log("Odejmowane wartości:", valuesToSubtract);
+
+//     // Aktualizacja wartości w tabeli
+//     portionTableData.forEach((td, index) => {
+//         console.log(td.textContent)
+//         const currentValue = parseFloat(td.textContent) || 0;
+//         console.log(currentValue)
+//         td.textContent = (currentValue - valuesToSubtract[index]).toFixed(2);
+//         console.log(td.textContent)
+//     });
+
+//     console.log("Tabela po aktualizacji:", portionTableData);
+}
