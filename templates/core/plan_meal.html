@@ -104,6 +104,11 @@
                 </tbody>
             </table>
         </div>
+        <form id="meal-form" method="POST">
+            {% csrf_token %}
+            <button type="submit" id="save-meal">Save Meal</button>
+        </form>
+
     </div>
 </div>
 

@@ -3,11 +3,14 @@ from django.views.decorators.http import require_POST
 from django.http import Http404, JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, get_list_or_404
 
-from .models import Product, Recipe, RecipeProduct
+from .models import Product, Recipe, RecipeProduct, Meal
 from .forms import ProductForm, RecipeProductForm, RecipeNameForm, RecipeGramsEditForm, AddProductToRecipeForm
 
 from django_htmx.http import HttpResponseClientRefresh
 from django.db.utils import IntegrityError
+from decimal import Decimal
+
+import json
 
 
 
@@ -295,3 +298,16 @@ def get_product(request, pk):
     }
 
     return JsonResponse(data)
+
+
+@require_POST
+def create_meal(request):
+    nutrition = request.POST.getlist("nutrition[]")
+    meal_name = request.POST.get("meal_name")
+    
+    if nutrition and meal_name:
+        meal = Meal.objects.create(name=meal_name, kcal=Decimal(nutrition[0]), protein=Decimal(nutrition[1]), fat=Decimal(nutrition[2]), carbs=Decimal(nutrition[3]))
+        meal.save()
+        return JsonResponse({"success":True})
+    
+    return JsonResponse({"success": False})

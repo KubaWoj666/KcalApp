@@ -54,3 +54,15 @@ class RecipeProduct(models.Model):
 
     def __str__(self):
         return f"{self.product.name} ({self.grams}g in {self.recipe.name})"
+    
+
+
+class Meal(models.Model):
+    name = models.CharField(max_length=200)
+    kcal = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="kcal/100g")
+    protein = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="protein/100g")
+    fat = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="fat/100g")
+    carbs = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="carbs/100g")
+    
+    def __str__(self):
+        return self.name

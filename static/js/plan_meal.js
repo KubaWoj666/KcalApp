@@ -218,3 +218,63 @@ function updateTableAfterRemoval(liText) {
 
 //     console.log("Tabela po aktualizacji:", portionTableData);
 }
+
+
+
+const saveMealBtn = document.getElementById("save-meal")
+mealForm = document.getElementById("meal-form")
+csrf = mealForm.querySelector("[name='csrfmiddlewaretoken']")
+
+
+
+mealForm.addEventListener("submit", function (e) {
+    // e.preventDefault()
+    const mealName = document.getElementById("selected-recipe-name")
+    const tableDataWithExtra = document.querySelectorAll("#table-data-extras")
+
+    let nutrition = []
+
+    tableDataWithExtra.forEach(element => {
+        nutrition.push(element.textContent)
+        
+    });
+
+    const fd = new FormData()
+
+    fd.append("csrfmiddlewaretoken", csrf.value);
+    // fd.append("nutrition", JSON.stringify(nutrition))
+    fd.append("meal_name", mealName.textContent )
+
+    tableDataWithExtra.forEach(element => {
+        fd.append("nutrition[]", element.textContent)
+        
+    });
+
+
+    $.ajax({
+        type: "POST",
+        url: "/save-meal/",
+        data: fd,
+        processData: false,  
+        contentType: false,
+
+        success: function(response){
+            console.log(response)
+            if (response.success == "True"){
+                alert("Meal wos saved successfully")
+            }else{
+                alert("OOPS something go wrong")
+            }
+            
+        },
+
+        error: function(response){
+            console.log(response)
+        }
+
+        
+    })
+    
+
+})
+
