@@ -302,12 +302,41 @@ def get_product(request, pk):
 
 @require_POST
 def create_meal(request):
-    nutrition = request.POST.getlist("nutrition[]")
-    meal_name = request.POST.get("meal_name")
-    
-    if nutrition and meal_name:
-        meal = Meal.objects.create(name=meal_name, kcal=Decimal(nutrition[0]), protein=Decimal(nutrition[1]), fat=Decimal(nutrition[2]), carbs=Decimal(nutrition[3]))
+    """
+    Handles meal creation by associating it with a selected recipe.
+    Extracts nutritional data and portion quantity from the request.
+    """
+    try:
+        
+        recipe_id = request.POST.get("recipe_id")
+        nutrition = request.POST.getlist("nutrition[]")
+        num_of_portions = request.POST.get("num_of_portions")
+
+      
+        if not (recipe_id and nutrition and num_of_portions):
+            return JsonResponse({"success": False, "error": "Missing required fields"})
+
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+
+        try:
+            kcal, protein, fat, carbs = map(Decimal, nutrition)
+            num_of_portions = int(num_of_portions)
+        except (InvalidOperation, ValueError):
+            return JsonResponse({"success": False, "error": "Invalid numerical values"})
+
+        meal = Meal.objects.create(
+            recipe=recipe,
+            kcal=kcal,
+            protein=protein,
+            fat=fat,
+            carbs=carbs,
+            total_portions=num_of_portions,
+            available_portions=num_of_portions
+        )
+
         meal.save()
-        return JsonResponse({"success":True})
-    
-    return JsonResponse({"success": False})
+
+        return JsonResponse({"success": True, "message": "Meal created successfully"})
+
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)

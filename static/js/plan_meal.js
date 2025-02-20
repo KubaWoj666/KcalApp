@@ -6,7 +6,12 @@ const selectedRecipeName = document.getElementById("selected-recipe-name")
 const recipeTotals = document.getElementById("recipe-totals")
 const portionInput = document.getElementById("portion-input")
 const portionTotals = document.getElementById("portion-totals")
+const mealForm = document.getElementById("meal-form")
+const tablePortionTotalsWithExtraIngredient = document.getElementById("portion-totals-with-extra-ingredient")
+const extraIngredientsList = document.getElementById("ingredient-list")
 
+
+let recipeId = 0
 
 // const actionValue = clickedButton;
  
@@ -18,6 +23,12 @@ recipesButtons.forEach(button => {
         while(recipeIngredients.firstChild) recipeIngredients.removeChild(recipeIngredients.firstChild);
         while(recipeTotals.firstChild) recipeTotals.removeChild(recipeTotals.firstChild);
         while(portionTotals.firstChild) portionTotals.removeChild(portionTotals.firstChild);
+        while(tablePortionTotalsWithExtraIngredient.firstChild) tablePortionTotalsWithExtraIngredient.removeChild(tablePortionTotalsWithExtraIngredient.firstChild);
+        while(extraIngredientsList.firstChild) extraIngredientsList.removeChild(extraIngredientsList.firstChild);
+
+
+        
+        // recipeId = button.getAttribute("data-recipe-id")
 
         portionInput.value = 0
         const actionValue = e.target;
@@ -40,6 +51,9 @@ recipesButtons.forEach(button => {
     
                 // product list 
                 recipeInfo.style.display = ""
+                mealForm.style.display = ""
+                
+
                 response.ingredients.forEach(product => {   
                     li = document.createElement('li')
                     recipeIngredients.appendChild(li)
@@ -77,7 +91,7 @@ function calculatePortion(response){
 
     portionInput.addEventListener("change", function (e) {
         while(portionTotals.firstChild) portionTotals.removeChild(portionTotals.firstChild);
-
+        console.log("OPA")
         portion = portionInput.value
         
         Object.entries(response.totals).forEach(([key, value]) => {
@@ -222,16 +236,19 @@ function updateTableAfterRemoval(liText) {
 
 
 const saveMealBtn = document.getElementById("save-meal")
-mealForm = document.getElementById("meal-form")
 csrf = mealForm.querySelector("[name='csrfmiddlewaretoken']")
 
 
+console.log(recipeId)
 
 mealForm.addEventListener("submit", function (e) {
-    // e.preventDefault()
+    e.preventDefault()
+    const numOfPortions = document.getElementById("portion-input")
+    console.log(numOfPortions.value)
     const mealName = document.getElementById("selected-recipe-name")
     const tableDataWithExtra = document.querySelectorAll("#table-data-extras")
 
+    console.log("OPA", recipeId)
     let nutrition = []
 
     tableDataWithExtra.forEach(element => {
@@ -241,6 +258,8 @@ mealForm.addEventListener("submit", function (e) {
 
     const fd = new FormData()
 
+    fd.append("recipe_id", recipeId);
+    fd.append("num_of_portions", numOfPortions.value);
     fd.append("csrfmiddlewaretoken", csrf.value);
     // fd.append("nutrition", JSON.stringify(nutrition))
     fd.append("meal_name", mealName.textContent )
@@ -259,11 +278,11 @@ mealForm.addEventListener("submit", function (e) {
         contentType: false,
 
         success: function(response){
-            console.log(response)
-            if (response.success == "True"){
-                alert("Meal wos saved successfully")
+            console.log(response.success)
+            if (response.success ){
+                alert(response.message)
             }else{
-                alert("OOPS something go wrong")
+                alert(response.error)
             }
             
         },

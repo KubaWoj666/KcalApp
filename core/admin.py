@@ -16,7 +16,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
 
 class MealAdmin(admin.ModelAdmin):
-    list_display = ["name", "kcal", "protein", "fat", "carbs"]
+    list_display = ["recipe", "kcal", "protein", "fat", "carbs", "total_portions", "available_portions"]
 
 
 
