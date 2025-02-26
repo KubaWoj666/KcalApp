@@ -1,19 +1,38 @@
 
-from django.forms import ModelForm, DateInput
-from .models import Meal
+from django import forms
+from core.models import MealEntry, Meal 
 
-class MealForm(ModelForm):
-  class Meta:
-    model = Meal
-    # datetime-local is a HTML5 input type, format to make date time show on fields
-    widgets = {
-      'start_time': DateInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
-      'end_time': DateInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
-    }
-    fields = '__all__'
+class MealForm(forms.ModelForm):
+    meal = forms.ModelChoiceField(
+        queryset=Meal.objects.all(),
+        empty_label="Choose a meal",
+        widget=forms.Select(attrs={"class": "form-control border-primary"}),
+        label="Meal",
+    )
 
-  def __init__(self, *args, **kwargs):
-    super(MealForm, self).__init__(*args, **kwargs)
-    # input_formats to parse HTML5 datetime-local input to datetime field
-    self.fields['start_time'].input_formats = ('%Y-%m-%dT%H:%M',)
-    self.fields['end_time'].input_formats = ('%Y-%m-%dT%H:%M',)
+    class Meta:
+        model = MealEntry
+        fields = ['meal', 'date', 'portions']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control border-primary'}),
+            'portions': forms.NumberInput(attrs={'class': 'form-control border-primary', 'min': 1})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(MealForm, self).__init__(*args, **kwargs)
+        # Modyfikacja etykiet opcji w polu 'meal'
+        self.fields['meal'].queryset = Meal.objects.all()
+        self.fields['meal'].label_from_instance = self.get_meal_label
+
+    def get_meal_label(self, meal):
+        """Formatowanie wyświetlanych opcji wyboru w polu meal"""
+        return f"{meal.recipe.name} | Portions: {meal.available_portions}/{meal.total_portions} | {meal.kcal} kcal"
+
+  
+  
+
+  
+
+  
+  
+  

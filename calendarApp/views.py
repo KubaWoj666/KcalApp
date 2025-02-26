@@ -1,21 +1,27 @@
 
 from datetime import datetime
 import calendar
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import JsonResponse
+
 from django.views import generic
 from django.utils.safestring import mark_safe
 from datetime import datetime, timedelta, date
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import make_aware
 
-from .models import Meal
-from .forms import MealForm
+
+from .forms import  MealForm
 from .utils import Calendar
-from django.urls import reverse
+
+from core.models import Recipe, Product, Meal, MealEntry 
+
+
+
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
 class CalendarView(generic.ListView):
-    model = Meal
+    model = MealEntry
     template_name = 'calendarApp/calendar.html'
 
     def get_context_data(self, **kwargs):
@@ -25,15 +31,49 @@ class CalendarView(generic.ListView):
         context['prev_month'] = prev_month(d)
         context['next_month'] = next_month(d)
 
+        context["recipes"] = Recipe.objects.all()
+        context["products"] = Product.objects.all()
+
+        context["meals"] = Meal.objects.all()
+
+        context["meal_core_form"] = MealForm()
+
         # use today's date for the calendar
 
         # Instantiate our calendar class with today's year and date
         cal = Calendar(d.year, d.month)
 
         # Call the formatmonth method, which returns our calendar as a table
-        html_cal = cal.formatmonth(withyear=True)
+        html_cal = cal.formatmonth(d.year, d.month,withyear=True)
         context['calendar'] = mark_safe(html_cal)
         return context
+
+    def post(self, request, *args, **kwargs):
+            """Obsługa formularza dodawania posiłku."""
+            message = None
+            form = MealForm(request.POST)
+            if form.is_valid():
+                meal = form.cleaned_data.get("meal")
+                portions = form.cleaned_data.get("portions")
+
+                meal_obj = get_object_or_404(Meal, id=meal.id)
+               
+                if meal_obj.available_portions < portions:
+                    message =f"You have only {meal_obj.available_portions} available portions of {meal_obj} meal"
+                    return JsonResponse({"success": False,  "message": message})  
+
+                meal_obj.available_portions -= portions
+                meal_obj.save()
+
+                if meal_obj.available_portions == 0:
+                    message = f"This was a last portion of {meal_obj} "
+                
+                meal_entry = form.save()
+                return JsonResponse({"success": True, "meal_id": meal_entry.id, "message": message})  # AJAX success
+
+            return JsonResponse({"success": False, "errors": form.errors})  # AJAX error
+
+
 
 def get_date(req_day):
     if req_day:
@@ -55,18 +95,4 @@ def next_month(d):
     next_month = last + timedelta(days=1)
     return f"{next_month.year}-{next_month.month:02d}"  # Format YYYY-MM
 
-
-
-
-def event(request, meal_id=None):
-    instance = Meal()
-    if meal_id:
-        instance = get_object_or_404(Meal, pk=meal_id)
-    else:
-        instance = Meal()
-    
-    form = MealForm(request.POST or None, instance=instance)
-    if request.POST and form.is_valid():
-        form.save()
-        return HttpResponseRedirect(reverse('calendar'))
-    return render(request, 'calendarApp/meal.html', {'form': form})
+        

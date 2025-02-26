@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 class Product(models.Model):
     name = models.CharField(max_length=150, unique=True)
@@ -68,3 +69,31 @@ class Meal(models.Model):
     
     def __str__(self):
         return self.recipe.name
+    
+
+class MealEntry(models.Model):
+    meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+    date = models.DateField()
+    portions = models.PositiveBigIntegerField(default=1)
+
+    class Meta:
+        verbose_name = "Meal entry"
+        verbose_name_plural = "Meal entry"
+
+    def __str__(self):
+        return self.meal.recipe.name
+    
+    def get_year(self):
+        if self.date_field:
+            return self.date.year  # To działa poprawnie
+        return None 
+    
+    def get_month(self):
+        if self.date_field:
+            return self.date.month  # To działa poprawnie
+        return None 
+    
+    # @property
+    # def get_html_url(self):
+    #     url = reverse('event_edit', args=(self.id,))
+    #     return f'<a href="{url}"> {self.meal.recipe.name} </a>'
