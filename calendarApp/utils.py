@@ -28,8 +28,17 @@ class Calendar(HTMLCalendar):
             total_protein += meal.meal.protein * meal.portions
             total_fat += meal.meal.fat * meal.portions
             total_carbs += meal.meal.carbs * meal.portions
-            meal_list += f"<li>{meal} ({meal.portions}x) <button id='delete-button' data-date='{self.year}-{self.month}-{day}' meal-name='{meal.meal.recipe.name}' ><i class='fa-solid fa-x'></i></button></li>"
-            # meal_list += f"<li>{meal.get_html_url} ({meal.portions}x) <button id='delete-button' data-date='{self.year}-{self.month}-{day}' meal-name='{meal.meal.recipe.name}' ><i class='fa-solid fa-x'></i></button></li>"
+            meal_list += (
+                f"<li>{meal} ({meal.portions}x) "
+                f"<form method='POST' action='/cal/delete-meal/' class='delete-meal-form'>"
+                f"    <input type='hidden' name='csrfmiddlewaretoken' value=''>"
+                f"    <input type='hidden' name='meal_id' value='{meal.meal.id}'>"
+                f"    <input type='hidden' name='meal_entry' value='{meal.id}'>"
+                f"    <input type='hidden' name='date' value='{self.year}-{self.month}-{day}'>"
+                f"    <button type='submit' class='delete-button'><i class='fa-solid fa-x'></i></button>"
+                f"</form>"
+                f"</li>"
+            )            # meal_list += f"<li>{meal.get_html_url} ({meal.portions}x) <button id='delete-button' data-date='{self.year}-{self.month}-{day}' meal-name='{meal.meal.recipe.name}' ><i class='fa-solid fa-x'></i></button></li>"
 
         # Generowanie tabeli wartości odżywczych (zmniejszona wersja)
         nutrition_table = (

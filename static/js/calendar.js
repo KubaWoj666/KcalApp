@@ -62,3 +62,45 @@ addMealForm.addEventListener("submit", function (e){
         processData: false,
     })
 })
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            document.cookie.split(";").forEach(cookie => {
+                let [name, value] = cookie.trim().split("=");
+                if (name === "csrftoken") {
+                    cookieValue = value;
+                }
+            });
+        }
+        return cookieValue;
+    }
+
+    document.querySelectorAll(".delete-meal-form").forEach((form) => {
+        form.querySelector("[name='csrfmiddlewaretoken']").value = getCSRFToken();
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            fetch(this.action, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": getCSRFToken()
+                }
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    this.parentElement.remove();  // Usuwa <li> po usunięciu posiłku
+                    location.reload("Refresh")
+
+                }
+            })
+            .catch((error) => console.error("Error:", error));
+        });
+    });
+});

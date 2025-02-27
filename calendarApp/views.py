@@ -8,6 +8,10 @@ from django.utils.safestring import mark_safe
 from datetime import datetime, timedelta, date
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import make_aware
+from django.views.decorators.http import require_POST
+from django_htmx.http import HttpResponseClientRefresh
+
+
 
 
 from .forms import  MealForm
@@ -50,6 +54,7 @@ class CalendarView(generic.ListView):
 
     def post(self, request, *args, **kwargs):
             """Obsługa formularza dodawania posiłku."""
+            
             message = None
             form = MealForm(request.POST)
             if form.is_valid():
@@ -95,4 +100,15 @@ def next_month(d):
     next_month = last + timedelta(days=1)
     return f"{next_month.year}-{next_month.month:02d}"  # Format YYYY-MM
 
-        
+@require_POST
+def delete_meal_entry(request):
+    meal_id = request.POST.get("meal_id")
+    meal_entry_id = request.POST.get("meal_entry")
+    
+    meal_obj = get_object_or_404(Meal, id=meal_id)
+    meal_entry_obj = get_object_or_404(MealEntry, id=meal_entry_id)
+    print(meal_entry_obj.portions)
+    meal_obj.available_portions += meal_entry_obj.portions
+    meal_obj.save()
+    meal_entry_obj.delete()
+    return JsonResponse({"success": True})
