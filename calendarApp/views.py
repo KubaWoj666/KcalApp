@@ -107,8 +107,9 @@ def delete_meal_entry(request):
     
     meal_obj = get_object_or_404(Meal, id=meal_id)
     meal_entry_obj = get_object_or_404(MealEntry, id=meal_entry_id)
-    print(meal_entry_obj.portions)
+
     meal_obj.available_portions += meal_entry_obj.portions
+    
     meal_obj.save()
     meal_entry_obj.delete()
     return JsonResponse({"success": True})

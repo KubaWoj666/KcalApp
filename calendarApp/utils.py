@@ -29,7 +29,7 @@ class Calendar(HTMLCalendar):
             total_fat += meal.meal.fat * meal.portions
             total_carbs += meal.meal.carbs * meal.portions
             meal_list += (
-                f"<li>{meal} ({meal.portions}x) "
+                f"<li>{meal.get_html_url} ({meal.portions}x) "
                 f"<form method='POST' action='/cal/delete-meal/' class='delete-meal-form'>"
                 f"    <input type='hidden' name='csrfmiddlewaretoken' value=''>"
                 f"    <input type='hidden' name='meal_id' value='{meal.meal.id}'>"

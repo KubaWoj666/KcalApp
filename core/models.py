@@ -93,7 +93,7 @@ class MealEntry(models.Model):
             return self.date.month  # To działa poprawnie
         return None 
     
-    # @property
-    # def get_html_url(self):
-    #     url = reverse('event_edit', args=(self.id,))
-    #     return f'<a href="{url}"> {self.meal.recipe.name} </a>'
+    @property
+    def get_html_url(self):
+        url = reverse('meal_entry_detail', args=(self.id,))
+        return f'<a href="{url}"> {self.meal.recipe.name} </a>'

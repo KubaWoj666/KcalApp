@@ -3,7 +3,7 @@ from django.views.decorators.http import require_POST
 from django.http import Http404, JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, get_list_or_404
 
-from .models import Product, Recipe, RecipeProduct, Meal
+from .models import Product, Recipe, RecipeProduct, Meal, MealEntry
 from .forms import ProductForm, RecipeProductForm, RecipeNameForm, RecipeGramsEditForm, AddProductToRecipeForm
 
 from django_htmx.http import HttpResponseClientRefresh
@@ -340,3 +340,20 @@ def create_meal(request):
 
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+
+def meal_entry_detail(request, pk):
+    meal_entry = get_object_or_404(MealEntry, id=pk)
+
+    if hasattr(meal_entry.meal, 'recipe'):
+        products = meal_entry.meal.recipe.products.all()
+    else:
+        products = []  
+
+
+    context = {
+        "meal_entry": meal_entry,
+        "products": products
+    }
+
+    return render(request, "core/meal_entry_detail.html", context)

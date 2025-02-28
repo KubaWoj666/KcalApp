@@ -12,5 +12,6 @@ urlpatterns = [
     path("create-product/", views.create_product_from_add_recipe_template, name="create_product"),
     path("plan-meal/", views.plan_meal_view, name="plan_meal"),
     path("get-recipe/<int:pk>/", views.get_recipe, name="get-recipe"),
-    path("save-meal/", views.create_meal, name="save-meal")
+    path("save-meal/", views.create_meal, name="save-meal"),
+    path("meal-entry-detail/<int:pk>/", views.meal_entry_detail, name="meal_entry_detail")
 ]
