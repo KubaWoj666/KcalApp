@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     #local
     'core',
     'calendarApp',
+    'stats',
 
     #3rd party
     'widget_tweaks',
