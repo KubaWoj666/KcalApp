@@ -16,134 +16,13 @@
     <a class="btn btn-info right" href="{% url 'calendar' %}?day={{ next_month }}"> Next Month </a>
 </div>
 
+<div>
+    <a class="btn btn-info left" href="{% url 'stats' %}">Stats</a>
+
+</div>
+
 
 {{ calendar }}
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div class="container">
-                <div class="recipe-selection">
-                    <h3>Choose a Recipe</h3>
-                    <div class="recipe-list">
-                        <ul>
-                            {% for recipe in recipes %}
-                                <li>
-                                    <button class="recipe-btn" data-recipe-id="{{ recipe.id }}">{{ recipe.name }}</button>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            
-                <div class="recipe-details">
-                    <h3 id="recipe-name">Selected Recipe: <p id="selected-recipe-name"></p></h3>
-                    
-                    <div id="recipe-info" style="display: none;">
-                        <h4>Ingredients</h4>
-                        <ul id="recipe-ingredients">
-                            <!-- Składniki będą dynamicznie dodawane tutaj -->
-                        </ul>
-            
-                        <h4>Nutritional Information</h4>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Calories</th>
-                                    <th>Protein</th>
-                                    <th>Fat</th>
-                                    <th>Carbs</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr id="recipe-totals">
-                                    
-                                </tr>
-                            </tbody>
-                        </table>
-            
-                        <h4>Divide your meal into portions.</h4>
-                        <label for="portion-input">Number of Portions:</label>
-                        <input id="portion-input" type="number" id="portion-input" min="1" value="0">
-                        
-                        <h4>Nutritional Information</h4>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Calories</th>
-                                    <th>Protein</th>
-                                    <th>Fat</th>
-                                    <th>Carbs</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr id="portion-totals">
-                                    
-                                </tr>
-                            </tbody>
-                        </table>
-            
-                        <h4>Add Extra Ingredient</h4>
-            
-                        <select id="extra-ingredient">
-                            <option value="" selected>Choose an ingredient</option>
-                            {% for product in products %}
-                                <option id="extra-product" value="{{ product.id }}" data-kcal="{{ product.kcal }}" 
-                                        data-protein="{{ product.protein }}" data-fat="{{ product.fat }}" 
-                                        data-carbs="{{ product.carbs }}">
-                                    {{ product.name }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                        <input type="number" id="extra-grams" placeholder="Grams" min="1" value="100">
-                        <button id="add-extra">Add</button>
-            
-                        <h4>Added Ingredients:</h4>
-                        <ul id="ingredient-list"></ul>
-            
-                        <h4>Nutritional Information with extra Ingredients </h4>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Calories</th>
-                                    <th>Protein</th>
-                                    <th>Fat</th>
-                                    <th>Carbs</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr id="portion-totals-with-extra-ingredient">
-                                    
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <form id="meal-form" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" id="save-meal">Save Meal</button>
-                    </form>
-            
-                </div>
-            </div>
-            
-            <script src="{% static 'js/plan_meal.js' %}"></script>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-
   <!-- MealModal -->
 <div class="modal fade" id="mealModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">

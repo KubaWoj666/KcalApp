@@ -1,0 +1,95 @@
+{% extends "_base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/stats.css' %}">
+{% endblock css %}
+    
+
+{% block content %}
+<div class="container mt-5" style="width: 600px;">
+    <h2 class="text-center">Statystyki Posiłków</h2>
+    <div class="container" style="border: 1px solid rgb(145, 142, 142); border-radius: 20px; height:230px">
+    <!-- Formularz wyboru zakresu dat -->
+        <form method="POST" class="mt-4">
+            {% csrf_token %}
+
+            <div class="row" >
+                <div  id="date_from" class="form-group " {% if field.errors %} errors {% endif %} >
+                    <label > {{ form.date_from.label_tag }}</label>
+                    {{ form.date_from.errors }}
+                    {% render_field form.date_from class="form-control border-primary"  name="date_from" id="id_date_from"%}
+                </div>
+
+                <div  id="date_to" class="form-group " {% if field.errors %} errors {% endif %} >
+                    <label > {{ form.date_to.label_tag }}</label>
+                    {{ form.date_to.errors }}
+                    {% render_field form.date_to class="form-control border-primary"  name="date_to" id="id_date_to"%}
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary w-100">Generuj</button>
+                </div>
+            </div>
+        </form>
+    </div>  
+
+    <!-- Sekcja na wyniki (jeśli są dostępne) -->
+     
+   
+        
+   
+        
+    {% if meal_entry_df %}
+    <div class="mt-5">
+        <h4>Podsumowanie od {{ date_from }} do {{ date_to }}</h4>
+
+       
+        <div class="table-responsive">
+            {{ meal_entry_df|safe }}
+        </div>
+        
+        <table>
+            <tr>
+              {% for col in meal_entry_df.columns %}
+                <td>
+                  {{col}}
+                </td>
+              {% endfor %}
+            </tr>
+              {% for index, row in meal_entry_df.iterrows %}
+                <tr>
+                  {% for cell in row %}
+                    <td>
+                      {{cell}}
+                    </td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+          </table>
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Kcal</th>
+                    <th>Białko</th>
+                    <th>Tłuszcze</th>
+                    <th>Węglowodany</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ totals.kcal }}</td>
+                    <td>{{ totals.protein }} g</td>
+                    <td>{{ totals.fat }} g</td>
+                    <td>{{ totals.carbs }} g</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+
+
+{% endblock %}
