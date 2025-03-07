@@ -43,51 +43,88 @@
    
         
     {% if meal_entry_df %}
-    <div class="mt-5">
-        <h4>Podsumowanie od {{ date_from }} do {{ date_to }}</h4>
+        <div class="mt-5">
+            <h4>Podsumowanie od {{ date_from }} do {{ date_to }}</h4>
 
-       
-        <div class="table-responsive">
-            {{ meal_entry_df|safe }}
-        </div>
         
-        <table>
-            <tr>
-              {% for col in meal_entry_df.columns %}
-                <td>
-                  {{col}}
-                </td>
-              {% endfor %}
-            </tr>
-              {% for index, row in meal_entry_df.iterrows %}
+            <div class="table-responsive">
+                {{ meal_entry_df|safe }}
+            </div>
+            
+            <table>
                 <tr>
-                  {% for cell in row %}
+                {% for col in meal_entry_df.columns %}
                     <td>
-                      {{cell}}
+                    {{col}}
                     </td>
-                  {% endfor %}
+                {% endfor %}
                 </tr>
-              {% endfor %}
-          </table>
-        <table class="table table-striped mt-3">
-            <thead>
-                <tr>
-                    <th>Kcal</th>
-                    <th>Białko</th>
-                    <th>Tłuszcze</th>
-                    <th>Węglowodany</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{{ totals.kcal }}</td>
-                    <td>{{ totals.protein }} g</td>
-                    <td>{{ totals.fat }} g</td>
-                    <td>{{ totals.carbs }} g</td>
-                </tr>
-            </tbody>
-        </table>
+                {% for index, row in meal_entry_df.iterrows %}
+                    <tr>
+                    {% for cell in row %}
+                        <td>
+                        {{cell}}
+                        </td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+            <table class="table table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th>Kcal</th>
+                        <th>Białko</th>
+                        <th>Tłuszcze</th>
+                        <th>Węglowodany</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ totals.kcal }}</td>
+                        <td>{{ totals.protein }} g</td>
+                        <td>{{ totals.fat }} g</td>
+                        <td>{{ totals.carbs }} g</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div>
+            <h1>No Data</h1>
+        </div>
+    {% endif %}
+
+    {% if chart %}
+    <div class="container">
+        <!-- Pierwszy wykres zajmuje cały rząd -->
+        <div class="row">
+            <div class="col-12 text-center">
+                <img src="data:image/png;base64, {{ chart|safe }}" alt="chart" class="img-fluid">
+            </div>
+        </div>
+    
+        <!-- Drugi i trzeci wykres w jednym rzędzie -->
+        <div class="row mt-4">
+            <div class="col-md-6 text-center">
+                <img src="data:image/png;base64, {{ chart_kcal|safe }}" alt="chart" class="img-fluid">
+            </div>
+            <div class="col-md-6 text-center">
+                <img src="data:image/png;base64, {{ chart_protein|safe }}" alt="chart" class="img-fluid">
+            </div>
+        </div>
+    
+        <!-- Czwarty i piąty wykres w kolejnym rzędzie -->
+        <div class="row mt-4">
+            <div class="col-md-6 text-center">
+                <img src="data:image/png;base64, {{ chart_carbs|safe }}" alt="chart" class="img-fluid">
+            </div>
+            <div class="col-md-6 text-center">
+                <img src="data:image/png;base64, {{ chart_fat|safe }}" alt="chart" class="img-fluid">
+            </div>
+        </div>
     </div>
+    
+      
     {% endif %}
 </div>
 
