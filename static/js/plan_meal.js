@@ -247,27 +247,43 @@ mealForm.addEventListener("submit", function (e) {
     console.log(numOfPortions.value)
     const mealName = document.getElementById("selected-recipe-name")
     const tableDataWithExtra = document.querySelectorAll("#table-data-extras")
+    const portionTable = document.querySelectorAll("#portion-table-data")
 
     console.log("OPA", recipeId)
-    let nutrition = []
+    // let nutrition = []
 
-    tableDataWithExtra.forEach(element => {
-        nutrition.push(element.textContent)
+    // tableDataWithExtra.forEach(element => {
+    //     nutrition.push(element.textContent)
         
-    });
+    // });
 
+    // console.log(nutrition)
+
+    
+    // portionTable.forEach(element => {
+    //     nutrition.push(element.textContent)
+    // })
+    
+
+    // console.log(nutrition)
     const fd = new FormData()
 
     fd.append("recipe_id", recipeId);
     fd.append("num_of_portions", numOfPortions.value);
     fd.append("csrfmiddlewaretoken", csrf.value);
-    // fd.append("nutrition", JSON.stringify(nutrition))
     fd.append("meal_name", mealName.textContent )
 
     tableDataWithExtra.forEach(element => {
         fd.append("nutrition[]", element.textContent)
         
     });
+
+    if (tableDataWithExtra.length === 0){
+        portionTable.forEach(element => {
+            fd.append("nutrition[]", element.textContent)
+            
+        });
+    }
 
 
     $.ajax({
@@ -278,7 +294,6 @@ mealForm.addEventListener("submit", function (e) {
         contentType: false,
 
         success: function(response){
-            console.log(response.success)
             if (response.success ){
                 alert(response.message)
             }else{
@@ -288,7 +303,7 @@ mealForm.addEventListener("submit", function (e) {
         },
 
         error: function(response){
-            console.log(response)
+            console.log("ERROR")
         }
 
         
