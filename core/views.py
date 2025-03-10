@@ -253,7 +253,7 @@ def create_product_from_add_recipe_template(request):
 
 def plan_meal_view(request):
     recipes = Recipe.objects.all()
-    products = Product.objects.all()
+    products = Product.objects.all().order_by("name")
 
 
     context = {

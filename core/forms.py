@@ -12,7 +12,7 @@ class ProductForm(forms.ModelForm):
 class RecipeProductForm(forms.ModelForm):
     name = forms.CharField(max_length=150)
     product = forms.ModelChoiceField(
-        queryset=Product.objects.all(),
+        queryset=Product.objects.all().order_by("name"),
         empty_label="Wybierz produkt",  # Tekst placeholdera
         widget=forms.Select(attrs={"class": "form-control border-primary"})
     )
@@ -51,7 +51,7 @@ class RecipeGramsEditForm(forms.Form):
 
 class AddProductToRecipeForm(forms.ModelForm):
     product = forms.ModelChoiceField(
-        queryset=Product.objects.all(),
+        queryset=Product.objects.all().order_by("name"),
         empty_label="Wybierz produkt",  # Tekst placeholdera
         widget=forms.Select(attrs={"class": "form-control border-primary"})
     )

@@ -91,7 +91,6 @@ function calculatePortion(response){
 
     portionInput.addEventListener("change", function (e) {
         while(portionTotals.firstChild) portionTotals.removeChild(portionTotals.firstChild);
-        console.log("OPA")
         portion = portionInput.value
         
         Object.entries(response.totals).forEach(([key, value]) => {
@@ -184,7 +183,6 @@ document.addEventListener("click", function (e) {
         const liToRemove = e.target.closest("li"); // Pobieramy najbliższy element <li>
         
         if (liToRemove) {
-            console.log("Usuwany składnik:", liToRemove.textContent);
             const liText = liToRemove.textContent; // Pobieramy tekst przed usunięciem
             liToRemove.remove(); // Usuwamy element z listy
             updateTableAfterRemoval(liText); // Przekazujemy usunięty tekst do funkcji
@@ -239,17 +237,13 @@ const saveMealBtn = document.getElementById("save-meal")
 csrf = mealForm.querySelector("[name='csrfmiddlewaretoken']")
 
 
-console.log(recipeId)
-
 mealForm.addEventListener("submit", function (e) {
     e.preventDefault()
     const numOfPortions = document.getElementById("portion-input")
-    console.log(numOfPortions.value)
     const mealName = document.getElementById("selected-recipe-name")
     const tableDataWithExtra = document.querySelectorAll("#table-data-extras")
     const portionTable = document.querySelectorAll("#portion-table-data")
 
-    console.log("OPA", recipeId)
     // let nutrition = []
 
     // tableDataWithExtra.forEach(element => {
