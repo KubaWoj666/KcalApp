@@ -64,8 +64,10 @@ class Meal(models.Model):
     protein = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="protein/100g")
     fat = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="fat/100g")
     carbs = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="carbs/100g")
-    total_portions = models.PositiveIntegerField(default=1)
-    available_portions =  models.PositiveIntegerField(default=1)
+    total_portions = models.PositiveIntegerField(default=0, null=True)
+    available_portions =  models.PositiveIntegerField(default=0, null=True)
+    infinite_portions = models.BooleanField(default=False)
+
     
     def __str__(self):
         return self.recipe.name

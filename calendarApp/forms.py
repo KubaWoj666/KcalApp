@@ -26,6 +26,9 @@ class MealForm(forms.ModelForm):
 
     def get_meal_label(self, meal):
         """Formatowanie wyświetlanych opcji wyboru w polu meal"""
+        if meal.infinite_portions == True:
+                    return f"{meal.recipe.name}| {meal.kcal} kcal"
+
         return f"{meal.recipe.name} | Portions: {meal.available_portions}/{meal.total_portions} | {meal.kcal} kcal"
 
   

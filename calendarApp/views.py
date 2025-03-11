@@ -62,6 +62,11 @@ class CalendarView(generic.ListView):
                 portions = form.cleaned_data.get("portions")
 
                 meal_obj = get_object_or_404(Meal, id=meal.id)
+
+                if meal_obj.infinite_portions == True:
+                    meal_entry = form.save()
+                    return JsonResponse({"success": True, "meal_id": meal_entry.id, "message": message})  # AJAX success
+
                
                 if meal_obj.available_portions < portions:
                     message =f"You have only {meal_obj.available_portions} available portions of {meal_obj} meal"
@@ -107,6 +112,10 @@ def delete_meal_entry(request):
     
     meal_obj = get_object_or_404(Meal, id=meal_id)
     meal_entry_obj = get_object_or_404(MealEntry, id=meal_entry_id)
+
+    if meal_obj.infinite_portions == True:
+        meal_entry_obj.delete()
+        return JsonResponse({"success": True})
 
     meal_obj.available_portions += meal_entry_obj.portions
     

@@ -84,21 +84,47 @@ clickedButton.addEventListener("click", function (e) {
 
 
 
-function calculatePortion(response){
-    const portionInput = document.getElementById("portion-input")
-    const portionTotals = document.getElementById("portion-totals")
+function calculatePortion(response) {
+    const portionInput = document.getElementById("portion-input");
+    const portionTotals = document.getElementById("portion-totals");
+    const infinitePortions = document.getElementById("infinite-portions-checkbox");
 
-
-    portionInput.addEventListener("change", function (e) {
-        while(portionTotals.firstChild) portionTotals.removeChild(portionTotals.firstChild);
-        portion = portionInput.value
+    // Event listener dla checkboxa
+    infinitePortions.addEventListener("change", function () {
+        while (portionTotals.firstChild) portionTotals.removeChild(portionTotals.firstChild);
         
+        // Jeśli checkbox jest zaznaczony, resetujemy input do wartości domyślnej
+        if (infinitePortions.checked) {
+            portionInput.value = 0;
+        }
+
+        let portion = 1;
         Object.entries(response.totals).forEach(([key, value]) => {
-            td = document.createElement("td")
-            portionTotals.appendChild(td)
-            td.id = "portion-table-data"
-            td.textContent = (value/portion).toFixed(2)            
+            let td = document.createElement("td");
+            portionTotals.appendChild(td);
+            td.id = "portion-table-data";
+            td.textContent = (value / portion).toFixed(2);
         });
+    });
+
+    // Event listener dla inputa porcji
+    portionInput.addEventListener("input", function () {
+        while (portionTotals.firstChild) portionTotals.removeChild(portionTotals.firstChild);
+        
+        // Odznaczamy checkbox, gdy użytkownik ręcznie zmienia ilość porcji
+        infinitePortions.checked = false;
+
+        let portion = portionInput.value;
+        Object.entries(response.totals).forEach(([key, value]) => {
+            let td = document.createElement("td");
+            portionTotals.appendChild(td);
+            td.id = "portion-table-data";
+            td.textContent = (value / portion).toFixed(2);
+        });
+    
+
+
+   
 
         const liExtra = document.getElementById("li-extra-ingredient")
         console.log(liExtra)
@@ -240,30 +266,25 @@ csrf = mealForm.querySelector("[name='csrfmiddlewaretoken']")
 mealForm.addEventListener("submit", function (e) {
     e.preventDefault()
     const numOfPortions = document.getElementById("portion-input")
+    const infinitePortions = document.getElementById("infinite-portions-checkbox")
     const mealName = document.getElementById("selected-recipe-name")
     const tableDataWithExtra = document.querySelectorAll("#table-data-extras")
     const portionTable = document.querySelectorAll("#portion-table-data")
 
-    // let nutrition = []
-
-    // tableDataWithExtra.forEach(element => {
-    //     nutrition.push(element.textContent)
-        
-    // });
-
-    // console.log(nutrition)
-
-    
-    // portionTable.forEach(element => {
-    //     nutrition.push(element.textContent)
-    // })
-    
-
-    // console.log(nutrition)
+   
     const fd = new FormData()
 
     fd.append("recipe_id", recipeId);
-    fd.append("num_of_portions", numOfPortions.value);
+    console.log(numOfPortions.value)
+    console.log(infinitePortions.checked)
+
+   
+
+    
+    fd.append("infinite_portions", infinitePortions.checked)
+    fd.append("num_of_portions", numOfPortions.value)
+
+    
     fd.append("csrfmiddlewaretoken", csrf.value);
     fd.append("meal_name", mealName.textContent )
 

@@ -16,7 +16,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
 
 class MealAdmin(admin.ModelAdmin):
-    list_display = ["id", "recipe", "recipe_id", "kcal", "protein", "fat", "carbs", "total_portions", "available_portions"]
+    list_display = ["id", "recipe", "recipe_id", "kcal", "protein", "fat", "carbs", "total_portions", "available_portions", "infinite_portions"]
 
     def recipe_id(self, obj):
         return obj.recipe.id

@@ -311,9 +311,13 @@ def create_meal(request):
         recipe_id = request.POST.get("recipe_id")
         nutrition = request.POST.getlist("nutrition[]")
         num_of_portions = request.POST.get("num_of_portions")
+        infinite_portions = request.POST.get("infinite_portions")
+
+
+        print(recipe_id, nutrition, num_of_portions, infinite_portions)
 
       
-        if not (recipe_id and nutrition and num_of_portions):
+        if not (recipe_id and nutrition and num_of_portions and infinite_portions):
             return JsonResponse({"success": False, "error": "Missing required fields"})
 
         recipe = get_object_or_404(Recipe, id=recipe_id)
@@ -324,15 +328,31 @@ def create_meal(request):
         except (InvalidOperation, ValueError):
             return JsonResponse({"success": False, "error": "Invalid numerical values"})
 
-        meal = Meal.objects.create(
-            recipe=recipe,
-            kcal=kcal,
-            protein=protein,
-            fat=fat,
-            carbs=carbs,
-            total_portions=num_of_portions,
-            available_portions=num_of_portions
-        )
+        if infinite_portions == "true":
+            meal = Meal.objects.create(
+                recipe=recipe,
+                kcal=kcal,
+                protein=protein,
+                fat=fat,
+                carbs=carbs,
+                total_portions=None,
+                available_portions=None,
+                infinite_portions=infinite_portions
+            )
+        
+        else:
+
+            meal = Meal.objects.create(
+                recipe=recipe,
+                kcal=kcal,
+                protein=protein,
+                fat=fat,
+                carbs=carbs,
+                total_portions=num_of_portions,
+                available_portions=num_of_portions,
+                infinite_portions=infinite_portions
+            )
+
 
         meal.save()
 
