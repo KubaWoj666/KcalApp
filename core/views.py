@@ -337,7 +337,7 @@ def create_meal(request):
                 carbs=carbs,
                 total_portions=None,
                 available_portions=None,
-                infinite_portions=infinite_portions
+                infinite_portions=True
             )
         
         else:
@@ -350,7 +350,7 @@ def create_meal(request):
                 carbs=carbs,
                 total_portions=num_of_portions,
                 available_portions=num_of_portions,
-                infinite_portions=infinite_portions
+                infinite_portions=False
             )
 
 
