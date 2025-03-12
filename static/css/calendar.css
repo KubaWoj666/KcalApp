@@ -1,30 +1,49 @@
-.calendar {
+/* Kontener dla całej strony */
+.container {
   width: 100%;
-  max-width: 900px; /* Zmniejszony maksymalny rozmiar */
+  max-width: 1200px;
   margin: auto;
-  font-size: 14px;
+  padding: 20px;
 }
 
+/* Styl dla kalendarza */
+.calendar {
+  width: 97%;
+  max-width: 97%;
+  margin: auto;
+  font-size: 14px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+/* Komórki kalendarza */
 .calendar td {
-  width: 120px; /* Mniejsze komórki */
-  height: 120px;
+  width: calc(100% / 7);
+  height: 110px;
   vertical-align: top;
   text-align: center;
   border: 1px solid #ddd;
   padding: 5px;
   background: #f9f9f9;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Podświetlenie dzisiejszej daty */
 .current-day {
-  background: #ffeb3b !important; /* Podświetlenie dzisiejszej daty */
+  background: #ffeb3b !important;
+  font-weight: bold;
 }
 
+/* Kontener na datę i przycisk */
 .date-button-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
+/* Przycisk dodawania posiłku */
 .add-meal-btn {
   background: #4CAF50;
   color: white;
@@ -32,18 +51,31 @@
   border-radius: 50%;
   cursor: pointer;
   font-weight: bold;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  margin-left: 5px;
 }
 
-
-.delete-button{
+/* Przycisk usuwania posiłku */
+.delete-button {
   background: red;
   color: white;
   border: none;
-  border-radius: 30%;
+  border-radius: 50%;
   cursor: pointer;
-  font-size: 8px;
+  font-size: 10px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* Tabela wartości odżywczych */
 .nutrition-table {
   font-size: 12px;
   margin-top: 5px;
@@ -54,22 +86,75 @@
 
 .nutrition-table th, .nutrition-table td {
   border: 1px solid #ddd;
-  padding: 3px;
+  padding: 3px !important; /* Nadpisuje inne style */
   height: 10px;
 }
 
+/* Lista posiłków */
 .meal-list {
   list-style: none;
-  padding: 0;
+  padding: 5px;
+  margin: 0;
   font-size: 12px;
   text-align: left;
 }
 
-.meal-list li{
+/* Pozycjonowanie posiłków */
+.meal-list li {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  background: #f3f3f3;
+  padding: 3px 5px;
+  border-radius: 4px;
+  margin-bottom: 2px;
 }
 
-.table-data{
-  height: 10px;
+/* Przyciski nawigacyjne */
+.clearfix {
+  /* display: flex;
+  justify-content: space-between; */
+  margin-bottom: 20px;
 }
+
+.clearfix a {
+  padding: 8px 12px;
+  background: #007BFF;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.clearfix a:hover {
+  background: #0056b3;
+}
+
+/* Modal */
+.modal-dialog {
+  max-width: 500px;
+}
+
+.modal-content {
+  padding: 20px;
+}
+
+.modal-header h1 {
+  font-size: 18px;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background: #28a745;
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+

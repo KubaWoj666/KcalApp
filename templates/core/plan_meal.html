@@ -1,4 +1,3 @@
-
 {% extends '_base.html' %}
 {% load static %}
 {% load widget_tweaks %}
@@ -9,6 +8,7 @@
 
 {% block content %}
 <div class="container">
+    <!-- Wybór przepisu -->
     <div class="recipe-selection">
         <h3>Choose a Recipe</h3>
         <div class="recipe-list">
@@ -22,17 +22,16 @@
         </div>
     </div>
 
+    <!-- Szczegóły przepisu -->
     <div class="recipe-details">
-        <h3 id="recipe-name">Selected Recipe: <p id="selected-recipe-name"></p></h3>
+        <h3 id="recipe-name">Selected Recipe: <span id="selected-recipe-name"></span></h3>
         
         <div id="recipe-info" style="display: none;">
             <h4>Ingredients</h4>
-            <ul id="recipe-ingredients">
-                <!-- Składniki będą dynamicznie dodawane tutaj -->
-            </ul>
+            <ul id="recipe-ingredients"></ul>
 
             <h4>Nutritional Information</h4>
-            <table class="table">
+            <table class="table nutrition-table">
                 <thead>
                     <tr>
                         <th>Calories</th>
@@ -42,21 +41,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr id="recipe-totals">
-                        
-                    </tr>
+                    <tr id="recipe-totals"></tr>
                 </tbody>
             </table>
 
+            <!-- Dzielenie na porcje -->
             <h4>Divide your meal into portions.</h4>
-            <label for="portion-input">Number of Portions:</label>
-            <input id="portion-input" type="number"  min="1" value="0">
+            <div class="portion-container">
+                <label for="portion-input">Number of Portions:</label>
+                <input id="portion-input" type="number" min="1" value="1">
+            </div>
 
-            <Label>Don't divide your meal to portions</Label>
-            <input id="infinite-portions-checkbox" type="checkbox" >
+            <div class="checkbox-container">
+                <input id="infinite-portions-checkbox" type="checkbox">
+                <label for="infinite-portions-checkbox">Don't divide your meal into portions</label>
+            </div>
             
             <h4>Nutritional Information</h4>
-            <table class="table">
+            <table class="table nutrition-table">
                 <thead>
                     <tr>
                         <th>Calories</th>
@@ -66,32 +68,32 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr id="portion-totals">
-                        
-                    </tr>
+                    <tr id="portion-totals"></tr>
                 </tbody>
             </table>
 
+            <!-- Dodawanie dodatkowych składników -->
             <h4>Add Extra Ingredient</h4>
-
-            <select id="extra-ingredient">
-                <option value="" selected>Choose an ingredient</option>
-                {% for product in products %}
-                    <option id="extra-product" value="{{ product.id }}" data-kcal="{{ product.kcal }}" 
-                            data-protein="{{ product.protein }}" data-fat="{{ product.fat }}" 
-                            data-carbs="{{ product.carbs }}">
-                        {{ product.name }}
-                    </option>
-                {% endfor %}
-            </select>
-            <input type="number" id="extra-grams" placeholder="Grams" min="1" value="100">
-            <button id="add-extra">Add</button>
+            <div class="extra-ingredient-container">
+                <select id="extra-ingredient">
+                    <option value="" selected>Choose an ingredient</option>
+                    {% for product in products %}
+                        <option id="extra-product" value="{{ product.id }}" data-kcal="{{ product.kcal }}" 
+                                data-protein="{{ product.protein }}" data-fat="{{ product.fat }}" 
+                                data-carbs="{{ product.carbs }}">
+                            {{ product.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <input type="number" id="extra-grams" placeholder="Grams" min="1" value="100">
+                <button id="add-extra">Add</button>
+            </div>
 
             <h4>Added Ingredients:</h4>
             <ul id="ingredient-list"></ul>
 
-            <h4>Nutritional Information with extra Ingredients </h4>
-            <table class="table">
+            <h4>Nutritional Information with extra Ingredients</h4>
+            <table class="table nutrition-table">
                 <thead>
                     <tr>
                         <th>Calories</th>
@@ -101,22 +103,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr id="portion-totals-with-extra-ingredient">
-                        
-                    </tr>
+                    <tr id="portion-totals-with-extra-ingredient"></tr>
                 </tbody>
             </table>
         </div>
+
         <form id="meal-form" method="POST" style="display: none;">
             {% csrf_token %}
             <button type="submit" id="save-meal">Save Meal</button>
         </form>
-
     </div>
 </div>
 
 <script src="{% static 'js/plan_meal.js' %}"></script>
 
 {% endblock content %}
-
-    

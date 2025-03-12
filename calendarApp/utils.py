@@ -72,7 +72,7 @@ class Calendar(HTMLCalendar):
         meal_entry = MealEntry.objects.filter(date__year=self.year, date__month=self.month)
 
         cal = (
-            f'<table border="0" cellpadding="2" cellspacing="2" class="calendar">\n'  # Zmniejszone paddingi
+            f'<table border="0"  cellspacing="2" class="calendar">\n'  # Zmniejszone paddingi
             f'{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'
             f'{self.formatweekheader()}\n<tbody>\n'
         )
