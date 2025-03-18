@@ -20,5 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("core.urls")),
     path("cal/", include("calendarApp.urls")),
-    path("stats/", include("stats.urls"))
+    path("stats/", include("stats.urls")),
+    path("users/", include("users.urls"))
 ]

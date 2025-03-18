@@ -44,12 +44,15 @@ INSTALLED_APPS = [
     'core',
     'calendarApp',
     'stats',
+    'users',
 
     #3rd party
     'widget_tweaks',
     'bootstrap5',
     'django_htmx',
 ]
+
+AUTH_USER_MODEL = "users.UserAccount"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

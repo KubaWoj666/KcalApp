@@ -1,0 +1,106 @@
+{% extends '_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/create_user.css'%}">
+{% endblock css %}
+    
+
+
+{% block content %}
+<div class="wrapper">
+    <div class="title-text">
+      <div class="title login">Login Form</div>
+      <div class="title signup">Signup Form</div>
+    </div>
+
+    <div class="form-container">
+
+      <div class="slide-controls">
+        <input type="radio" name="slide" id="login" checked>
+        <input type="radio" name="slide" id="signup">
+        <label for="login" class="slide login">Login</label>
+        <label for="signup" class="slide signup">Signup</label>
+        <div class="slider-tab"></div>
+      </div>
+
+      <div class="form-inner">
+
+        <form action="#" class="login">
+          <div class="field">
+            <div  id="email" class="field"  {% if field.errors %} errors {% endif %} >
+                {{ form.email.errors }}
+                {% render_field form.email name="email" id="id_protein"%}
+            </div>           </div>
+          <div class="field">
+            <input type="password" placeholder="Password" required>
+          </div>
+          <div class="pass-link"><a href="#">Forgot password?</a></div>
+          <div class="field btn">
+            <div class="btn-layer"></div>
+            <input type="submit" value="Login">
+          </div>
+          <div class="signup-link">Not a member? <a href="">Signup now</a></div>
+        </form>
+
+        <form action="{% url 'create_user' %}" method="post" class="signup">
+            {% csrf_token %}
+            <div class="field"> 
+                <div  id="email" class="field"  {% if field.errors %} errors {% endif %} >
+                    {{ form.email.errors }}
+                    {% render_field form.email name="email" id="id_email"%}
+                </div>           
+            </div>
+
+            <div class="field"> 
+                <div  id="name" class="field"  {% if field.errors %} errors {% endif %} >
+                    {{ form.name.errors }}
+                    {% render_field form.name name="name" id="id_email"%}
+                </div>           
+            </div>
+
+            <div class="field"> 
+                <div  id="height" class="field"  {% if field.errors %} errors {% endif %} >
+                    {{ form.height.errors }}
+                    {% render_field form.height name="height" id="id_height"%}
+                </div>           
+            </div>
+
+            <div class="field"> 
+                <div  id="weight" class="field"  {% if field.errors %} errors {% endif %} >
+                    {{ form.weight.errors }}
+                    {% render_field form.weight name="weight" id="id_weight"%}
+                </div>           
+            </div>
+
+
+            <div class="field">
+                <div  id="password1" class="field"  {% if field.errors %} errors {% endif %} >
+                    {{ form.password1.errors }}
+                    {% render_field form.password1 name="password1" id="id_password1"%}
+                </div>            
+            </div>
+
+            <div class="field">
+                <div  id="password2" class="field"  {% if field.errors %} errors {% endif %} >
+                    {{ form.password2.errors }}
+                    {% render_field form.password2 name="password2" id="id_password2"%}
+                </div>            
+            </div>
+
+          
+          <div class="field btn"> 
+            <button type="submit" value="Signup">Signup</button>
+          </div>
+        </form>
+        
+      </div>
+    </div>
+  </div>
+
+
+<script src="{% static 'js/create_user.js' %}"></script>
+
+{% endblock content %}
+    
