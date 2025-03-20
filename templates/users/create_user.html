@@ -27,23 +27,33 @@
 
       <div class="form-inner">
 
-        <form action="#" class="login">
-          <div class="field">
-            <div  id="email" class="field"  {% if field.errors %} errors {% endif %} >
-                {{ form.email.errors }}
-                {% render_field form.email name="email" id="id_protein"%}
-            </div>           </div>
-          <div class="field">
-            <input type="password" placeholder="Password" required>
-          </div>
+        <!-- LOGIN FORM -->
+        <form action="{% url 'login' %}" method="post"  class="login">
+            {% csrf_token %}
+            <div class="field">
+                <div  id="email" class="field"  {% if field.errors %} errors {% endif %} >
+                    {{ login_form.username.errors }}
+                    {% render_field form.username class="form-control" placeholder="Enter your email" %}
+                </div>           
+            </div>
+
+            <div class="field">
+                <div  id="password1" class="field"  {% if field.errors %} errors {% endif %} >
+                    {{ login_form.password.errors }}
+            {% render_field form.password class="form-control" placeholder="Enter your password" %}
+                </div>            
+            </div>
+
+
           <div class="pass-link"><a href="#">Forgot password?</a></div>
+
           <div class="field btn">
-            <div class="btn-layer"></div>
-            <input type="submit" value="Login">
+            <button type="submit" value="Login">Login</button>
           </div>
           <div class="signup-link">Not a member? <a href="">Signup now</a></div>
         </form>
 
+        <!-- SIGN-UP FORM -->
         <form action="{% url 'create_user' %}" method="post" class="signup">
             {% csrf_token %}
             <div class="field"> 

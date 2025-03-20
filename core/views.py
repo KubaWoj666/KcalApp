@@ -20,11 +20,14 @@ def is_ajax(request):
 
 
 def home_view(request):
+    user = request.user
     recipes = Recipe.objects.all()
     request.session.pop("current_recipe_id", None)  
 
     context = {
-        "recipes": recipes
+        "recipes": recipes,
+        "user": user
+
     }
     return render(request, "core/home.html", context)
 
@@ -51,7 +54,7 @@ def add_and_fetch_product(request):
 
     context = {
         "form": form,
-        "products": products
+        "products": products,
     }
 
     return render(request, "core/add_product.html", context)

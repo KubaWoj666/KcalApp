@@ -1,16 +1,13 @@
 {% extends '_base.html' %}
-{% load static  %}
+{% load static %}
 {% load widget_tweaks %}
-
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/add_product.css' %}">
 {% endblock css %}
-    
 
 {% block content %}
 
-<div class="container">
 <!-- product list -->
 <div class="product-list">
     {% include 'core/partials/product_list.html' %}
@@ -21,40 +18,37 @@
     <h3>Dodaj Produkt</h3>
     <form method="post">
         {% csrf_token %}
-        <div  id="name" class="form-group " {% if field.errors %} errors {% endif %} >
-                <label > {{ form.name.label_tag }}</label>
-                {{ form.name.errors }}
-                {% render_field form.name class="form-control border-primary"  name="name" id="id_name"%}
+        <div id="name" class="form-group" {% if field.errors %} errors {% endif %}>
+            <label>{{ form.name.label_tag }}</label>
+            {{ form.name.errors }}
+            {% render_field form.name class="form-control border-primary" %}
         </div>
-        <div  id="kcal" class="form-group " {% if field.errors %} errors {% endif %} >
-            <label > {{ form.kcal.label_tag }}</label>
+        <div id="kcal" class="form-group" {% if field.errors %} errors {% endif %}>
+            <label>{{ form.kcal.label_tag }}</label>
             {{ form.kcal.errors }}
-            {% render_field form.kcal class="form-control border-primary"  name="kcal" id="id_kcal"%}
+            {% render_field form.kcal class="form-control border-primary" %}
         </div>
-        <div  id="protein" class="form-group " {% if field.errors %} errors {% endif %} >
-            <label > {{ form.protein.label_tag }}</label>
+        <div id="protein" class="form-group" {% if field.errors %} errors {% endif %}>
+            <label>{{ form.protein.label_tag }}</label>
             {{ form.protein.errors }}
-            {% render_field form.protein class="form-control border-primary"  name="protein" id="id_protein"%}
+            {% render_field form.protein class="form-control border-primary" %}
         </div>
-        <div  id="fat" class="form-group " {% if field.errors %} errors {% endif %} >
-            <label > {{ form.fat.label_tag }}</label>
+        <div id="fat" class="form-group" {% if field.errors %} errors {% endif %}>
+            <label>{{ form.fat.label_tag }}</label>
             {{ form.fat.errors }}
-            {% render_field form.fat class="form-control border-primary"  name="fat" id="id_fat"%}
+            {% render_field form.fat class="form-control border-primary" %}
         </div>
-        <div  id="carbs" class="form-group " {% if field.errors %} errors {% endif %} >
-            <label > {{ form.carbs.label_tag }}</label>
+        <div id="carbs" class="form-group" {% if field.errors %} errors {% endif %}>
+            <label>{{ form.carbs.label_tag }}</label>
             {{ form.carbs.errors }}
-            {% render_field form.carbs class="form-control border-primary"  name="carbs" id="id_carbs"%}
+            {% render_field form.carbs class="form-control border-primary" %}
         </div>
         
         <div class="form-buttons">
-            <button type="submit"  name="save" value="save" class="btn btn-success">Save</button>
-            <button type="submit"  name="save" value="save_add_another" class="btn btn-primary">Save and Add Another</button>
+            <button type="submit" name="save" value="save" class="btn btn-success">Save</button>
+            <button type="submit" name="save" value="save_add_another" class="btn btn-primary">Save and Add Another</button>
         </div>
-
     </form>
 </div>
-
-
 
 {% endblock content %}
