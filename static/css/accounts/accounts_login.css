@@ -1,0 +1,97 @@
+.container-login {
+    /* background: linear-gradient(to right, #1e3c72, #2a5298); */
+    min-height: 100vh;
+    padding: 40px 0;
+    font-family: 'Poppins', sans-serif;
+    width: 100%;
+}
+
+.bg-white {
+    background: #fff;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+h2.text-dark {
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+.btn-google,
+.btn-google.github {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px 20px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    transition: background 0.3s ease;
+}
+
+.btn-google {
+    background: #ffffff;
+    color: #444;
+    border: 1px solid #ddd;
+}
+
+.btn-google img {
+    width: 20px;
+    height: 20px;
+}
+
+.btn-google:hover {
+    background-color: #f1f1f1;
+}
+
+.btn-google.github {
+    background: #4a525b;
+    color: #fff;
+}
+
+.btn-google.github:hover {
+    background-color: #1b1f23;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    border-color: #1e3c72;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(30, 60, 114, 0.1);
+}
+
+.btn-submit {
+    width: 100%;
+    background: linear-gradient(to right, #1e3c72, #2a5298);
+    border: none;
+    padding: 12px 20px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+}
+
+.btn-submit:hover {
+    background: linear-gradient(to right, #2a5298, #1e3c72);
+}
+
+.divider {
+    height: 1px;
+    background: #ddd;
+    margin: 20px 0;
+}

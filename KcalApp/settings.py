@@ -48,11 +48,32 @@ INSTALLED_APPS = [
 
     #3rd party
     'widget_tweaks',
+    'crispy_forms',
+    "crispy_bootstrap5",
     'bootstrap5',
     'django_htmx',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.github',
+
+
 ]
 
 AUTH_USER_MODEL = "users.UserAccount"
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_SIGNUP_FORM_CLASS = "users.forms.CustomUserCreationForm"
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+
+     # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -64,6 +85,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
     'django_htmx.middleware.HtmxMiddleware',
+    "allauth.account.middleware.AccountMiddleware", #Allauth middleware:
 ]
 
 ROOT_URLCONF = 'KcalApp.urls'
@@ -141,3 +163,37 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGOUT_REDIRECT_URL = "home"
+LOGIN_REDIRECT_URL = 'home'
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': env.str("GOOGLE_CLIENT_ID"),
+            'secret': env.str("GOOGLE_SECRET"),
+        },
+        'SCOPE': ['profile','email',],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'METHOD': 'oauth2',
+        'VERIFIED_EMAIL': True,
+
+    },
+
+    'github': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        'APP': {
+            'client_id':env.str("GITHUB_CLIENT_ID") ,
+            'secret': env.str("GITHUB_SECRET"),
+            
+        }
+    }
+}
+
+SOCIALACCOUNT_LOGIN_ON_GET=True
+LOGIN_REDIRECT_URL = 'home'
+SIGNUP_REDIRECT_URL ='home'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"  
+CRISPY_TEMPLATE_PACK = "bootstrap5" 

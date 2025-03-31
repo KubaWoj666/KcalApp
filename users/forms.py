@@ -18,5 +18,10 @@ class CustomUserCreationForm(UserCreationForm):
         self.fields['height'].widget.attrs['placeholder'] = self.fields['height'].label or 'Height'
         self.fields['weight'].widget.attrs['placeholder'] = self.fields['weight'].label or 'Weight'
 
+    def signup(self, request, user):
+        
+        user.save()
+        
+
 
 

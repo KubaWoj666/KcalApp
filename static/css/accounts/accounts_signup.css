@@ -1,0 +1,30 @@
+/* body {
+    background: linear-gradient(to right, #1e3c72, #2a5298);
+    font-family: 'Poppins', sans-serif;
+  } */
+
+  
+  .container-login {
+    padding: 30px 0;
+    width: 100%;
+  }
+  
+  .btn-submit {
+    background: linear-gradient(to right, #1e3c72, #2a5298);
+    border: none;
+    color: white;
+    font-weight: 500;
+    padding: 10px 0;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+  }
+  
+  .btn-submit:hover {
+    background: linear-gradient(to right, #2a5298, #1e3c72);
+  }
+  
+  .form-control:focus {
+    border-color: #1e3c72;
+    box-shadow: 0 0 4px rgba(30, 60, 114, 0.5);
+  }
+  
