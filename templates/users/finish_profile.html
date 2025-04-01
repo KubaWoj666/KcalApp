@@ -1,0 +1,47 @@
+{% extends "_base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white text-center">
+                    <h4>Finish Create Your Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" >
+                        {% csrf_token %}
+
+                        <div id="name" class="form-group" {% if field.errors %} errors {% endif %}>
+                            <label>{{ form.name.label_tag }}</label>
+                            {{ form.name.errors }}
+                            {% render_field form.name class="form-control border-primary" %}
+                        </div>
+            
+                        <div id="height" class="form-group" {% if field.errors %} errors {% endif %}>
+                            <label>{{ form.height.label_tag }}</label>
+                            {{ form.height.errors }}
+                            {% render_field form.height class="form-control border-primary" %}
+                        </div>
+            
+                        <div id="weight" class="form-group" {% if field.errors %} errors {% endif %}>
+                            <label>{{ form.weight.label_tag }}</label>
+                            {{ form.weight.errors }}
+                            {% render_field form.weight class="form-control border-primary" %}
+                        </div>
+            
+
+                        <button type="submit" class="btn btn-success w-100 mt-3" >Create Profile</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

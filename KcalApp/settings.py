@@ -65,7 +65,7 @@ AUTH_USER_MODEL = "users.UserAccount"
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_SIGNUP_FORM_CLASS = "users.forms.CustomUserCreationForm"
+# ACCOUNT_SIGNUP_FORM_CLASS = "users.forms.CustomUserCreationForm"
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 AUTHENTICATION_BACKENDS = [
@@ -190,10 +190,11 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
-
+ACCOUNT_ADAPTER = 'users.views.MyAccountAdapter'
 SOCIALACCOUNT_LOGIN_ON_GET=True
-LOGIN_REDIRECT_URL = 'home'
-SIGNUP_REDIRECT_URL ='home'
+# ACCOUNT_SIGNUP_REDIRECT_URL = f"profile/{request.user.id}"
+# LOGIN_REDIRECT_URL = 'home'
+
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"  
 CRISPY_TEMPLATE_PACK = "bootstrap5" 
