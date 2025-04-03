@@ -13,8 +13,8 @@
 
     <div class="container">
         <!-- Lista produktów -->
-        <div class="product-list" style="max-width: 100%; white-space: nowrap; overflow: hidden;">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="max-width: 100%; margin-left: 167px; position: absolute;">
+        <div class="product-list">
+            <button type="button" id="modal-button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" >
                 <i class="fa-solid fa-plus"></i> Create new product
             </button>
             {% include 'core/partials/product_list.html' %}

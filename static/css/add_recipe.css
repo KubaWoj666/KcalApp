@@ -196,3 +196,8 @@ padding: 0;
 color: darkred; /* Ciemniejszy czerwony przy najechaniu */
 }
 
+#modal-button{
+    width: 14%;
+    margin-left: 100px;
+    position: absolute;
+}

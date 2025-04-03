@@ -7,48 +7,28 @@
 {% endblock css %}
 
 {% block content %}
+<div class="section">
+  <div class="product-list">
+      {% include 'core/partials/product_list.html' %}
+  </div>
 
-<!-- product list -->
-<div class="product-list">
-    {% include 'core/partials/product_list.html' %}
+  <div class="form-container">
+      <h3>Dodaj Produkt</h3>
+      <form method="post">
+          {% csrf_token %}
+          {% for field in form %}
+              <div class="form-group" id="{{ field.name }}">
+                  <label>{{ field.label_tag }}</label>
+                  {{ field.errors }}
+                  {% render_field field class="form-control border-primary" %}
+              </div>
+          {% endfor %}
+          
+          <div class="form-buttons">
+              <button type="submit" name="save" value="save" class="btn btn-success">Save</button>
+              <button type="submit" name="save" value="save_add_another" class="btn btn-primary">Save and Add Another</button>
+          </div>
+      </form>
+  </div>
 </div>
-
-<!-- Form -->
-<div class="form-container">
-    <h3>Dodaj Produkt</h3>
-    <form method="post">
-        {% csrf_token %}
-        <div id="name" class="form-group" {% if field.errors %} errors {% endif %}>
-            <label>{{ form.name.label_tag }}</label>
-            {{ form.name.errors }}
-            {% render_field form.name class="form-control border-primary" %}
-        </div>
-        <div id="kcal" class="form-group" {% if field.errors %} errors {% endif %}>
-            <label>{{ form.kcal.label_tag }}</label>
-            {{ form.kcal.errors }}
-            {% render_field form.kcal class="form-control border-primary" %}
-        </div>
-        <div id="protein" class="form-group" {% if field.errors %} errors {% endif %}>
-            <label>{{ form.protein.label_tag }}</label>
-            {{ form.protein.errors }}
-            {% render_field form.protein class="form-control border-primary" %}
-        </div>
-        <div id="fat" class="form-group" {% if field.errors %} errors {% endif %}>
-            <label>{{ form.fat.label_tag }}</label>
-            {{ form.fat.errors }}
-            {% render_field form.fat class="form-control border-primary" %}
-        </div>
-        <div id="carbs" class="form-group" {% if field.errors %} errors {% endif %}>
-            <label>{{ form.carbs.label_tag }}</label>
-            {{ form.carbs.errors }}
-            {% render_field form.carbs class="form-control border-primary" %}
-        </div>
-        
-        <div class="form-buttons">
-            <button type="submit" name="save" value="save" class="btn btn-success">Save</button>
-            <button type="submit" name="save" value="save_add_another" class="btn btn-primary">Save and Add Another</button>
-        </div>
-    </form>
-</div>
-
 {% endblock content %}
