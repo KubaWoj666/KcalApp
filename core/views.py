@@ -168,7 +168,9 @@ def add_product_to_recipe(request, pk):
 def create_recipe(request):
     form = RecipeProductForm()
     add_product_form = ProductForm()
+    user = request.user
     data = {}
+
 
     try:
         products = Product.objects.all().order_by("name")
@@ -183,7 +185,7 @@ def create_recipe(request):
             recipe_id = request.session.get("current_recipe_id")
 
             if not recipe_id:           
-                recipe = Recipe.objects.create(name=recipe_name)
+                recipe = Recipe.objects.create(name=recipe_name, creator=user)
                 request.session["current_recipe_id"] = recipe.id
 
             else:

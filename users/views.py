@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, resolve_url
 from django.urls import reverse
 from django.contrib.auth.forms import AuthenticationForm
 
+from core.models import Recipe
+
 from .models import UserAccount
 from .forms import CustomUserCreationForm
 from django.views.decorators.http import require_POST
@@ -10,7 +12,7 @@ from django.contrib.auth import authenticate, login, logout
 from allauth.account.views import SignupView
 from allauth.socialaccount.views import SignupView as SocialSignupView
 from .models import UserAccount
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 
 from allauth.account.adapter import DefaultAccountAdapter
  
@@ -49,9 +51,11 @@ def finish_profile_create(request, pk):
 
 def profile(request, pk):
     user = get_object_or_404(UserAccount, pk=request.user.id)
+    recipes = get_list_or_404(Recipe, creator=user)
 
     context = {
-        "user": user
+        "user": user,
+        "recipes": recipes
     }
     return render(request, "users/profile.html", context)
 

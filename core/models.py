@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from users.models import UserAccount
 
 class Product(models.Model):
     name = models.CharField(max_length=150, unique=True)
@@ -12,6 +13,7 @@ class Product(models.Model):
         return self.name
 
 class Recipe(models.Model):
+    creator = models.ForeignKey(UserAccount, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=150)
     products = models.ManyToManyField(Product, through="RecipeProduct", related_name="recipes")
 
