@@ -41,10 +41,10 @@
             <div class="card shadow-sm p-3 mb-3">
                 <h5 class="card-title">📅 Today</h5>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Kcal: {{ daily.kcal|default:"0" }}</li>
-                    <li class="list-group-item">Protein: {{ daily.protein|default:"0" }}g</li>
-                    <li class="list-group-item">Fat: {{ daily.fat|default:"0" }}g</li>
-                    <li class="list-group-item">Carbs: {{ daily.carbs|default:"0" }}g</li>
+                    <li class="list-group-item">Kcal: {{ daily.kcal|default:"0"|floatformat:2 }}</li>
+                    <li class="list-group-item">Protein: {{ daily.protein|default:"0"|floatformat:2 }}g</li>
+                    <li class="list-group-item">Fat: {{ daily.fat|default:"0"|floatformat:2 }}g</li>
+                    <li class="list-group-item">Carbs: {{ daily.carbs|default:"0"|floatformat:2 }}g</li>
                 </ul>
             </div>
 

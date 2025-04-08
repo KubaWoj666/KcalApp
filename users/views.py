@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, resolve_url
 from django.urls import reverse
 from django.contrib.auth.forms import AuthenticationForm
+import datetime
+from django.db.models import Sum, F
 
-from core.models import Recipe
+from core.models import Recipe, MealEntry
 
 from .models import UserAccount
 from .forms import CustomUserCreationForm
@@ -52,10 +54,17 @@ def finish_profile_create(request, pk):
 def profile(request, pk):
     user = get_object_or_404(UserAccount, pk=request.user.id)
     recipes = get_list_or_404(Recipe, creator=user)
+    daily = MealEntry.objects.filter(date=datetime.date.today()).aggregate(
+    kcal=Sum(F("meal__kcal")),
+    protein=Sum(F("meal__protein")),
+    carbs=Sum(F("meal__carbs")),
+    fat=Sum(F("meal__fat")),
+)
 
     context = {
         "user": user,
-        "recipes": recipes
+        "recipes": recipes,
+        "daily": daily,       
     }
     return render(request, "users/profile.html", context)
 
