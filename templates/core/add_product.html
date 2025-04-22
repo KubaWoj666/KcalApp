@@ -7,6 +7,17 @@
 {% endblock css %}
 
 {% block content %}
+
+{% if messages %}
+<div class="d-flex justify-content-center mt-4">
+    <div class="alert alert-danger text-center" role="alert" style="min-width: 300px; max-width: 600px;">
+        {% for message in messages %}
+            <p class="mb-0">{{ message }}</p>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
 <div class="section">
   <div class="product-list">
       {% include 'core/partials/product_list.html' %}

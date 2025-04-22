@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 from django.http import Http404, JsonResponse, HttpResponse
@@ -33,25 +34,25 @@ def home_view(request):
 
 
 def add_and_fetch_product(request):
-    form = ProductForm()
     user = request.user
-    
-    try:
-        products = Product.objects.filter(creator=user).order_by("name")
-    except Exception as e:
-        products = []
+    form = ProductForm(creator=user) if request.method != "POST" else ProductForm(request.POST, creator=user)
+
+    products = Product.objects.filter(creator=user).order_by("name")
 
     if request.method == "POST":
-        form = ProductForm(request.POST or None, creator=user)
         action = request.POST.get("save")
-        if action == "save":
-            if form.is_valid():
+
+        if form.is_valid():
+            try:
                 form.save()
-            return redirect("home")
-        if action == "save_add_another":
-            if form.is_valid():
-                form.save()
-            return redirect("add_product")
+                if action == "save":
+                    return redirect("home")
+                elif action == "save_add_another":
+                    return redirect("add_product")
+            except IntegrityError:
+                messages.error(request, "Product already exists!")
+        else:
+            messages.error(request, "Form contains errors.")
 
     context = {
         "form": form,
@@ -59,7 +60,6 @@ def add_and_fetch_product(request):
     }
 
     return render(request, "core/add_product.html", context)
-
 
 #Recipe detail View
 def recipe_detail(request, pk):
