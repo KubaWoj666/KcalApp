@@ -69,6 +69,13 @@
           <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        
+            <div id="alert" style="display: none">
+                <div class="alert alert-danger text-center" role="alert" style="min-width: 300px; max-width: 600px;">
+                        <p id="message"></p>
+                </div>
+            </div>
+       
         <div class="modal-body">
           {% include 'core/partials/add_new_product.html' with form=add_product_form %}
         </div>

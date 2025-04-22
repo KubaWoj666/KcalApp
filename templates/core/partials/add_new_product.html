@@ -1,6 +1,6 @@
 {% load widget_tweaks %}
 
-<h3>Dodaj Produkt</h3>
+<h3>Dodaj Produkt </h3>
     <form method="post"  id="create-product" action="{% url 'create_product' %}">
         {% csrf_token %}
         <div  id="name" class="form-group " {% if field.errors %} errors {% endif %} >

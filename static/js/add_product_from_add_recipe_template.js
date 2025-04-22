@@ -1,11 +1,14 @@
-productForm = document.getElementById("create-product")
-csrf = productForm.querySelector("[name='csrfmiddlewaretoken']")
+ productForm = document.getElementById("create-product")
+ csrf = productForm.querySelector("[name='csrfmiddlewaretoken']")
+const alert = document.getElementById("alert")
+const message = document.getElementById("message")
 
+console.log(alert.value, message)
 
-document.getElementById('save_btn').addEventListener('click', function() {
-    // Close Modal
-    $('#exampleModal').modal('hide');
-});
+// document.getElementById('save_btn').addEventListener('click', function() {
+//     // Close Modal
+//     $('#exampleModal').modal('hide');
+// });
 
 productForm.addEventListener("submit", function (e) {
     e.preventDefault()
@@ -21,7 +24,20 @@ productForm.addEventListener("submit", function (e) {
         dataType: "json",
 
         success: function (response) {
-            updateProductDropdownList(response.new_product)
+            console.log(response.success)
+            if(response.success == true){
+                updateProductDropdownList(response.new_product)
+                $('#exampleModal').modal('hide');
+            }else{
+                console.log(response.message)
+                alert.style.display = ""
+                message.textContent = response.message
+
+            }
+            
+        
+            
+            
         },
 
         error: function (jqXHR, textStatus, errorThrown) {

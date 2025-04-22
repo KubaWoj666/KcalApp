@@ -131,7 +131,6 @@ def delete_recipe_product_from_recipe(request, pk):
 def add_product_to_recipe(request, pk):
     """Adding product to recipe"""
     user = request.user
-    print(user, "Vidok")
     recipe = get_object_or_404(Recipe, id=pk)
     form = AddProductToRecipeForm()
     products = RecipeProduct.objects.filter(recipe=recipe)
@@ -246,21 +245,36 @@ def delete_from_product_list(request):
 
 @require_POST
 def create_product_from_add_recipe_template(request):
-    
+    user = request.user
+
     if is_ajax:
-        form = ProductForm(request.POST)
+        form = ProductForm(request.POST, creator=user)
+
         if form.is_valid():
-            new_product = form.save()
-            return JsonResponse({"success": True, 
-                                 "new_product": {
-                                     "id": new_product.id,
-                                     "name": new_product.name,
-                                     "kcal": new_product.kcal
-                                 }})
-        return JsonResponse({"success": False, "errors": form.errors}, status=400)
+            try:
+                new_product = form.save()
+                return JsonResponse({
+                    "success": True,
+                    "new_product": {
+                        "id": new_product.id,
+                        "name": new_product.name,
+                        "kcal": new_product.kcal,
+                    }
+                })
+            except IntegrityError:
+                
+                return JsonResponse({
+                    "success": False,
+                    "message": "Product already exist!"
+                })   
+        else:
+            return JsonResponse({
+                "success": False,
+                "message": "Formularz zawiera błędy.",
+                "errors": form.errors
+            })  # status=200
 
-    return JsonResponse({"error": "Metoda niedozwolona"}, status=405)
-
+    return JsonResponse({"error": "Nieprawidłowe żądanie."}, status=400)
 
 def plan_meal_view(request):
     recipes = Recipe.objects.all()
