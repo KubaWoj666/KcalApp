@@ -6,19 +6,42 @@ from django.core.validators import MinValueValidator
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        exclude = ["id"]
+        fields = ["name", "kcal", "protein", "carbs", "fat"]
+
+    
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("creator", None)     
+        super().__init__(*args, **kwargs)
+    
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if self.user:
+            instance.creator = self.user
+        if commit:
+            instance.save()
+        return instance
+    
+            
 
 
 class RecipeProductForm(forms.ModelForm):
     name = forms.CharField(max_length=150)
     product = forms.ModelChoiceField(
-        queryset=Product.objects.all().order_by("name"),
+        queryset=Product.objects.none(),
         empty_label="Wybierz produkt",  # Tekst placeholdera
         widget=forms.Select(attrs={"class": "form-control border-primary"})
     )
     class Meta:
         model = RecipeProduct
         fields = ["name", "product", "grams"]
+    
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("creator", None)    
+        super().__init__(*args, **kwargs)
+
+        if user:
+            self.fields["product"].queryset = Product.objects.filter(creator=user).order_by("name")
+    
 
 
 class RecipeNameForm(forms.ModelForm):
@@ -51,10 +74,20 @@ class RecipeGramsEditForm(forms.Form):
 
 class AddProductToRecipeForm(forms.ModelForm):
     product = forms.ModelChoiceField(
-        queryset=Product.objects.all().order_by("name"),
+        queryset=Product.objects.none(),
         empty_label="Wybierz produkt",  # Tekst placeholdera
         widget=forms.Select(attrs={"class": "form-control border-primary"})
     )
     class Meta:
         model = RecipeProduct
         fields = ["product", "grams"]
+    
+    
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("creator", None)
+        print(user)    
+        super().__init__(*args, **kwargs)
+
+        if user:
+            self.fields["product"].queryset = Product.objects.filter(creator=user).order_by("name")
+    

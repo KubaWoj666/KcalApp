@@ -34,14 +34,15 @@ def home_view(request):
 
 def add_and_fetch_product(request):
     form = ProductForm()
+    user = request.user
     
     try:
-        products = Product.objects.all().order_by("name")
+        products = Product.objects.filter(creator=user).order_by("name")
     except Exception as e:
         products = []
 
     if request.method == "POST":
-        form = ProductForm(request.POST or None)
+        form = ProductForm(request.POST or None, creator=user)
         action = request.POST.get("save")
         if action == "save":
             if form.is_valid():
@@ -62,6 +63,7 @@ def add_and_fetch_product(request):
 
 #Recipe detail View
 def recipe_detail(request, pk):
+    user = request.user
     add_product_form = AddProductToRecipeForm()
     product_form = ProductForm()
     form = RecipeNameForm()
@@ -128,12 +130,15 @@ def delete_recipe_product_from_recipe(request, pk):
 @require_POST
 def add_product_to_recipe(request, pk):
     """Adding product to recipe"""
+    user = request.user
+    print(user, "Vidok")
     recipe = get_object_or_404(Recipe, id=pk)
-    form = AddProductToRecipeForm(request.POST or None)
+    form = AddProductToRecipeForm()
     products = RecipeProduct.objects.filter(recipe=recipe)
     grams_edit_form = RecipeGramsEditForm()
 
     if request.method == "POST":
+        form = AddProductToRecipeForm(request.POST or None, creator=user)
         if form.is_valid():
             product_obj = form.cleaned_data.get("product")
             grams = form.cleaned_data.get("grams")
@@ -166,6 +171,7 @@ def add_product_to_recipe(request, pk):
 
 
 def create_recipe(request):
+    user = request.user
     form = RecipeProductForm()
     add_product_form = ProductForm()
     user = request.user
@@ -173,12 +179,12 @@ def create_recipe(request):
 
 
     try:
-        products = Product.objects.all().order_by("name")
+        products = Product.objects.filter(creator=user).order_by("name")
     except Exception as e:
         products = []
 
     if is_ajax:
-        form = RecipeProductForm(request.POST or None)
+        form = RecipeProductForm(request.POST or None, creator=user)
         action = request.POST.get("action") 
         if form.is_valid(): 
             recipe_name = form.cleaned_data.get("name")

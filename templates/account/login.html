@@ -20,14 +20,14 @@
                     <h2 class="text-dark">Login</h2>
 
                     
-                    <a href="{% provider_login_url 'google' %}">
+                    <a href="{% url 'google_login' %}">
                         <button class="btn btn-google">
-                            <img src="https://playtht-website-assets.s3.amazonaws.com/img/brand/google.svg" alt="Google logo"/>Sign up with Google
+                            <img src="https://playtht-website-assets.s3.amazonaws.com/img/brand/google.svg" alt="Google logo"/>Log in with Google
                         </button>
                     </a>
-                    <a href="{% provider_login_url 'github' %}">
+                    <a href="{% url 'github_login' %}">
                         <button class="btn btn-google github">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub logo"/>Sign up with GitHub
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub logo"/>Log in with GitHub
                         </button>
                     </a>
 

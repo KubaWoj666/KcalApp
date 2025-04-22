@@ -57,9 +57,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.github',
-
-
 ]
+
+SITE_ID = 1
 
 AUTH_USER_MODEL = "users.UserAccount"
 ACCOUNT_LOGIN_METHODS = {'email'}

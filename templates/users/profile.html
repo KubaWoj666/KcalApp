@@ -48,13 +48,23 @@
                 </ul>
             </div>
 
-            <div class="card shadow-sm p-3">
+            <div class="card shadow-sm p-3 mb-3">
                 <h5 class="card-title">📊 This Week</h5>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Kcal: {{ weekly.kcal|default:"0" }}</li>
-                    <li class="list-group-item">Protein: {{ weekly.protein|default:"0" }}g</li>
-                    <li class="list-group-item">Fat: {{ weekly.fat|default:"0" }}g</li>
-                    <li class="list-group-item">Carbs: {{ weekly.carbs|default:"0" }}g</li>
+                    <li class="list-group-item">Kcal: {{ current_week.kcal|default:"0"|floatformat:2 }}</li>
+                    <li class="list-group-item">Protein: {{ current_week.protein|default:"0"|floatformat:2 }}g</li>
+                    <li class="list-group-item">Fat: {{ current_week.fat|default:"0"|floatformat:2 }}g</li>
+                    <li class="list-group-item">Carbs: {{ current_week.carbs|default:"0"|floatformat:2 }}g</li>
+                </ul>
+            </div>
+
+            <div class="card shadow-sm p-3">
+                <h5 class="card-title">📊 Last Week</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Kcal: {{ last_week.kcal|default:"0"|floatformat:2 }}</li>
+                    <li class="list-group-item">Protein: {{ last_week.protein|default:"0"|floatformat:2 }}g</li>
+                    <li class="list-group-item">Fat: {{ last_week.fat|default:"0"|floatformat:2 }}g</li>
+                    <li class="list-group-item">Carbs: {{ last_week.carbs|default:"0"|floatformat:2 }}g</li>
                 </ul>
             </div>
         </div>

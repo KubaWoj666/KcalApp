@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.forms import AuthenticationForm
 import datetime
 from django.db.models import Sum, F
+from django.utils import timezone
 
 from core.models import Recipe, MealEntry
 
@@ -31,6 +32,7 @@ class CustomSignupView(SignupView):
         return redirect("profile_create", pk=user.id)
     
 
+
 def finish_profile_create(request, pk):
     user = get_object_or_404(UserAccount, id=pk)
     form = CustomUserCreationForm()
@@ -53,18 +55,51 @@ def finish_profile_create(request, pk):
 
 def profile(request, pk):
     user = get_object_or_404(UserAccount, pk=request.user.id)
-    recipes = get_list_or_404(Recipe, creator=user)
+    recipes = Recipe.objects.filter(creator=user)
+
     daily = MealEntry.objects.filter(date=datetime.date.today()).aggregate(
     kcal=Sum(F("meal__kcal")),
     protein=Sum(F("meal__protein")),
     carbs=Sum(F("meal__carbs")),
     fat=Sum(F("meal__fat")),
-)
+    )
+    
+    some_day_last_week = datetime.date.today() - datetime.timedelta(days=7)
+    some_day_last_week_SO = timezone.now().date() - datetime.timedelta(days=7)
+    monday_of_last_week = some_day_last_week - datetime.timedelta(days=(some_day_last_week.isocalendar()[2] - 1))
+    monday_of_this_week = monday_of_last_week + datetime.timedelta(days=7)
+
+
+    print(some_day_last_week.day)
+    print(some_day_last_week_SO)
+    print(monday_of_last_week)
+    print(monday_of_this_week)
+
+    last_week = MealEntry.objects.filter(date__gte=monday_of_last_week, date__lt=monday_of_this_week).aggregate(
+    kcal=Sum(F("meal__kcal")),
+    protein=Sum(F("meal__protein")),
+    carbs=Sum(F("meal__carbs")),
+    fat=Sum(F("meal__fat")),
+    )
+
+    date = datetime.date.today()
+    start_week = date - datetime.timedelta(date.weekday())
+    end_week = start_week + datetime.timedelta(7)
+
+    current_week = MealEntry.objects.filter(date__gte=start_week, date__lt=end_week).aggregate(
+    kcal=Sum(F("meal__kcal")),
+    protein=Sum(F("meal__protein")),
+    carbs=Sum(F("meal__carbs")),
+    fat=Sum(F("meal__fat")),
+    )
+
 
     context = {
         "user": user,
         "recipes": recipes,
-        "daily": daily,       
+        "daily": daily,  
+        "current_week": current_week,
+        "last_week": last_week    
     }
     return render(request, "users/profile.html", context)
 

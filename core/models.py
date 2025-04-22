@@ -3,6 +3,7 @@ from django.urls import reverse
 from users.models import UserAccount
 
 class Product(models.Model):
+    creator = models.ForeignKey(UserAccount, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=150, unique=True)
     kcal = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="kcal/100g")
     protein = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="protein/100g")
