@@ -277,8 +277,9 @@ def create_product_from_add_recipe_template(request):
     return JsonResponse({"error": "Nieprawidłowe żądanie."}, status=400)
 
 def plan_meal_view(request):
-    recipes = Recipe.objects.all()
-    products = Product.objects.all().order_by("name")
+    user = request.user
+    recipes = Recipe.objects.filter(creator=user)
+    products = Product.objects.filter(creator=user).order_by("name")
 
 
     context = {
@@ -331,6 +332,7 @@ def create_meal(request):
     Handles meal creation by associating it with a selected recipe.
     Extracts nutritional data and portion quantity from the request.
     """
+    user = request.user
     try:
         
         recipe_id = request.POST.get("recipe_id")
@@ -355,6 +357,7 @@ def create_meal(request):
 
         if infinite_portions == "true":
             meal = Meal.objects.create(
+                creator=user,
                 recipe=recipe,
                 kcal=kcal,
                 protein=protein,
@@ -368,6 +371,7 @@ def create_meal(request):
         else:
 
             meal = Meal.objects.create(
+                creator=user,
                 recipe=recipe,
                 kcal=kcal,
                 protein=protein,

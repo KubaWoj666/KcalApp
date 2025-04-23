@@ -25,6 +25,7 @@ def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
 class CalendarView(generic.ListView):
+    
     model = MealEntry
     template_name = 'calendarApp/calendar.html'
 
@@ -40,12 +41,12 @@ class CalendarView(generic.ListView):
 
         context["meals"] = Meal.objects.all()
 
-        context["meal_core_form"] = MealForm()
+        context["meal_core_form"] = MealForm(creator=self.request.user)
 
         # use today's date for the calendar
 
         # Instantiate our calendar class with today's year and date
-        cal = Calendar(d.year, d.month)
+        cal = Calendar(d.year, d.month, self.request)
 
         # Call the formatmonth method, which returns our calendar as a table
         html_cal = cal.formatmonth(d.year, d.month,withyear=True)
@@ -54,9 +55,9 @@ class CalendarView(generic.ListView):
 
     def post(self, request, *args, **kwargs):
             """Obsługa formularza dodawania posiłku."""
-            
+            user = request.user
             message = None
-            form = MealForm(request.POST)
+            form = MealForm(request.POST, creator=user)
             if form.is_valid():
                 meal = form.cleaned_data.get("meal")
                 portions = form.cleaned_data.get("portions")

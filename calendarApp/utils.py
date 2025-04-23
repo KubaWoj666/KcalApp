@@ -3,13 +3,15 @@ from calendar import HTMLCalendar, monthrange
 from core.models import MealEntry
 
 class Calendar(HTMLCalendar):
-    def __init__(self, year=None, month=None):
+    def __init__(self, year=None, month=None, request=None):
         super().__init__()
         self.year = year
         self.month = month
         self.today = datetime.today().date()
+        self.request = request
 
     def formatday(self, day, meal_entry):
+        user = self.request.user
         if day == 0:  # Puste dni na początku/końcu miesiąca
             return "<td></td>"
 
@@ -18,7 +20,7 @@ class Calendar(HTMLCalendar):
         if day > days_in_month:
             return "<td></td>"
 
-        meal_entry_per_day = meal_entry.filter(date__day=day)
+        meal_entry_per_day = meal_entry.filter(date__day=day, meal__creator=user)
 
         # Sumowanie wartości odżywczych dla danego dnia
         total_kcal = total_protein = total_fat = total_carbs = 0

@@ -85,7 +85,6 @@ class AddProductToRecipeForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("creator", None)
-        print(user)    
         super().__init__(*args, **kwargs)
 
         if user:

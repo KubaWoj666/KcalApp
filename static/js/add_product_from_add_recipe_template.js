@@ -3,7 +3,6 @@
 const alert = document.getElementById("alert")
 const message = document.getElementById("message")
 
-console.log(alert.value, message)
 
 // document.getElementById('save_btn').addEventListener('click', function() {
 //     // Close Modal

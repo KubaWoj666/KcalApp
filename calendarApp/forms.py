@@ -4,7 +4,7 @@ from core.models import MealEntry, Meal
 
 class MealForm(forms.ModelForm):
     meal = forms.ModelChoiceField(
-        queryset=Meal.objects.all(),
+        queryset=Meal.objects.none(),
         empty_label="Choose a meal",
         widget=forms.Select(attrs={"class": "form-control border-primary"}),
         label="Meal",
@@ -19,9 +19,11 @@ class MealForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop("creator", None)
+        print("uesr", user)
         super(MealForm, self).__init__(*args, **kwargs)
         # Modyfikacja etykiet opcji w polu 'meal'
-        self.fields['meal'].queryset = Meal.objects.all()
+        self.fields['meal'].queryset = Meal.objects.filter(creator=user)
         self.fields['meal'].label_from_instance = self.get_meal_label
 
     def get_meal_label(self, meal):

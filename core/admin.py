@@ -16,17 +16,19 @@ class RecipeAdmin(admin.ModelAdmin):
 
 
 class MealAdmin(admin.ModelAdmin):
-    list_display = ["id", "recipe", "recipe_id", "kcal", "protein", "fat", "carbs", "total_portions", "available_portions", "infinite_portions"]
+    list_display = ["id", "creator", "recipe", "recipe_id", "kcal", "protein", "fat", "carbs", "total_portions", "available_portions", "infinite_portions"]
 
     def recipe_id(self, obj):
         return obj.recipe.id
 
 
 class MealEntryAdmin(admin.ModelAdmin):
-    list_display = ["id", "meal", "meal_id", "date", "portions"]
+    list_display = ["id", "meal_creator", "meal", "meal_id", "date", "portions"]
 
     def meal_id(self, obj):
         return obj.meal.id
+    def meal_creator(self, obj):
+        return obj.meal.creator
 
 
 

@@ -64,6 +64,7 @@ class RecipeProduct(models.Model):
 
 
 class Meal(models.Model):
+    creator = models.ForeignKey(UserAccount, on_delete=models.CASCADE, null=True)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     kcal = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="kcal/100g")
     protein = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="protein/100g")
