@@ -35,7 +35,7 @@
             {% for product in products %}
             
             <tr >
-                <td>{{ product.product }} </td>
+                <td><a href="{% url 'product_detail' product.id %}">{{ product.product }}</a></td>
                 <td class="table_data">{{ product.grams }}g 
                     <form hx-post="{% url 'recipe_detail' pk=recipe.id %}" hx-swap="none" hx-push-url="false">
                         {% csrf_token %}

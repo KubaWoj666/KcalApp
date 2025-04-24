@@ -13,7 +13,10 @@
     max-width: 640px;
 }
 
-
+a{
+    text-decoration: none;
+    color: black;
+}
 
 h1 {
     text-align: center;

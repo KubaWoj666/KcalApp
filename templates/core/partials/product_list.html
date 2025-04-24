@@ -4,7 +4,9 @@
         
         {% if products %}
             {% for product in products  %}
-                <li product-name="{{product.name}}">{{product.name}} - {{product.kcal}} kcal/100g</li>
+            <li>
+                <a style="text-decoration: none; color:black" href="{% url 'product_detail' product.id %}" product-name="{{product.name}}">{{product.name}} - {{product.kcal}} kcal/100g</a>
+            </li>
             {% endfor %}
         {% else %}
             <p>Nie ma jeszcze żadnych produktów </p>

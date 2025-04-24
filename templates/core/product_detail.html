@@ -1,0 +1,46 @@
+{% extends '_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+{% endblock css %}
+{% block content %}
+<div class="page-wrapper d-flex justify-content-center align-items-start mt-5">
+    <div class="container shadow p-4 rounded bg-white" style="max-width: 800px; width: 100%;">
+        <h1 class="product-name mb-4 text-center">{{ product.name }}</h1>
+
+        <form method="post" id="create-product">
+            {% csrf_token %}
+            {% for field in form.visible_fields %}
+                <div class="form-group mb-3" style="width: 500px;">
+                    <label>{{ field.label }}</label>
+                    {% if field.errors %}
+                        <div class="text-danger small">{{ field.errors|striptags }}</div>
+                    {% endif %}
+                    {% render_field field class="form-control border-primary" %}
+                </div>
+            {% endfor %}
+            
+            <div class="form-buttons text-center">
+                <button id="save_btn" type="submit" name="save" value="save" class="btn btn-success w-100">Save</button>
+            </div>
+        </form>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'home' %}" class="btn btn-secondary">
+                <i class="fa fa-arrow-left"></i> Back to Home
+            </a>
+            <form method="post" 
+                  hx-post="" 
+                  hx-confirm="Are you sure you want to delete this product?"
+                  hx-target="body"
+                  hx-push-url="false">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+

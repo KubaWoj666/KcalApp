@@ -61,6 +61,25 @@ def add_and_fetch_product(request):
 
     return render(request, "core/add_product.html", context)
 
+def product_detail(request, pk):
+    user = request.user
+    product = Product.objects.get(id=pk, creator=user)
+    form = ProductForm(instance=product)
+
+    if request.method == "POST":
+        form = ProductForm(request.POST or None, instance=product)
+        if form.is_valid():
+            form.save()
+            print("POST")
+
+    context = {
+        "product": product,
+        "form": form,
+        
+    }
+
+    return render(request, "core/product_detail.html", context)
+
 #Recipe detail View
 def recipe_detail(request, pk):
     user = request.user
