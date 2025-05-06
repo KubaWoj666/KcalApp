@@ -10,4 +10,5 @@ urlpatterns = [
     # path("social/signup/", views.CustomSocialSignupView.as_view(), name="socialaccount_signup"),
     path("profile-create/<uuid:pk>/", views.finish_profile_create, name="profile_create"),
     path("profile/<uuid:pk>/", views.profile, name="profile"),
+    path("recipe/<int:recipe_id>/delete", views.delete_recipe_view, name="delete_recipe")
 ]

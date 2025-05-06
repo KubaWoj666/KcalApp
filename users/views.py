@@ -6,6 +6,8 @@ from django.db.models import Sum, F
 from django.utils import timezone
 
 from core.models import Recipe, MealEntry
+from django_htmx.http import HttpResponseClientRefresh
+
 
 from .models import UserAccount
 from .forms import CustomUserCreationForm
@@ -70,11 +72,6 @@ def profile(request, pk):
     monday_of_this_week = monday_of_last_week + datetime.timedelta(days=7)
 
 
-    print(some_day_last_week.day)
-    print(some_day_last_week_SO)
-    print(monday_of_last_week)
-    print(monday_of_this_week)
-
     last_week = MealEntry.objects.filter(date__gte=monday_of_last_week, date__lt=monday_of_this_week).aggregate(
     kcal=Sum(F("meal__kcal")),
     protein=Sum(F("meal__protein")),
@@ -93,7 +90,6 @@ def profile(request, pk):
     fat=Sum(F("meal__fat")),
     )
 
-
     context = {
         "user": user,
         "recipes": recipes,
@@ -103,6 +99,11 @@ def profile(request, pk):
     }
     return render(request, "users/profile.html", context)
 
+
+def delete_recipe_view(request, recipe_id):
+    recipe = get_object_or_404(Recipe, id=recipe_id, creator=request.user)
+    recipe.delete()
+    return redirect("profile", request.user.id)
 
 # def create_user_view(request):
 #     form = CustomUserCreationForm()
