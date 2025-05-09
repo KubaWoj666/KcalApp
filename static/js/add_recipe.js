@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const gramsInput = document.getElementById("id_grams");
     const selectedProductsList = document.getElementById("selected-products-list");
 
-    const url = "http://127.0.0.1:8000/add-recipe/";
+    const url = "/add-recipe/";
 
     recipeForm.addEventListener("submit", function (e) {
         e.preventDefault(); // ZATRZYMAJ PRZEŁADOWANIE STRONY

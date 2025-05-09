@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from calendar import HTMLCalendar, monthrange
-from core.models import MealEntry
+from core.models import MealEntry, SnackEntry
+
 
 class Calendar(HTMLCalendar):
     def __init__(self, year=None, month=None, request=None):
@@ -10,22 +11,22 @@ class Calendar(HTMLCalendar):
         self.today = datetime.today().date()
         self.request = request
 
-    def formatday(self, day, meal_entry):
+    def formatday(self, day, meal_entries, snack_entries):
         user = self.request.user
-        if day == 0:  # Puste dni na początku/końcu miesiąca
+        if day == 0:
             return "<td></td>"
 
-        # Sprawdzenie, czy dzień istnieje w danym miesiącu
         days_in_month = monthrange(self.year, self.month)[1]
         if day > days_in_month:
             return "<td></td>"
 
-        meal_entry_per_day = meal_entry.filter(date__day=day, meal__creator=user)
+        meals_per_day = meal_entries.filter(date__day=day)
+        snacks_per_day = snack_entries.filter(date__day=day, user=user)
 
-        # Sumowanie wartości odżywczych dla danego dnia
         total_kcal = total_protein = total_fat = total_carbs = 0
         meal_list = ""
-        for meal in meal_entry_per_day:
+
+        for meal in meals_per_day:
             total_kcal += meal.meal.kcal * meal.portions
             total_protein += meal.meal.protein * meal.portions
             total_fat += meal.meal.fat * meal.portions
@@ -38,11 +39,24 @@ class Calendar(HTMLCalendar):
                 f"    <input type='hidden' name='meal_entry' value='{meal.id}'>"
                 f"    <input type='hidden' name='date' value='{self.year}-{self.month}-{day}'>"
                 f"    <button type='submit' class='delete-button'><i class='fa-solid fa-x'></i></button>"
-                f"</form>"
-                f"</li>"
-            )            # meal_list += f"<li>{meal.get_html_url} ({meal.portions}x) <button id='delete-button' data-date='{self.year}-{self.month}-{day}' meal-name='{meal.meal.recipe.name}' ><i class='fa-solid fa-x'></i></button></li>"
+                f"</form></li>"
+            )
 
-        # Generowanie tabeli wartości odżywczych (zmniejszona wersja)
+        for snack in snacks_per_day:
+            total_kcal += snack.product.kcal * snack.grams / 100
+            total_protein += snack.product.protein * snack.grams / 100
+            total_fat += snack.product.fat * snack.grams / 100
+            total_carbs += snack.product.carbs * snack.grams / 100
+            meal_list += (
+                f"<li>{snack.product.name} ({snack.grams}g) "
+                f"<form method='POST' action='/cal/delete-snack/' class='delete-snack-form'>"
+                f"    <input type='hidden' name='csrfmiddlewaretoken' value=''>"
+                f"    <input type='hidden' name='snack_id' value='{snack.id}'>"
+                f"    <input type='hidden' name='date' value='{self.year}-{self.month}-{day}'>"
+                f"    <button type='submit' class='delete-button'><i class='fa-solid fa-x'></i></button>"
+                f"</form></li>"
+            )
+
         nutrition_table = (
             f"<table class='nutrition-table'>"
             f"<tr><th>Kcal</th><th>Protein</th><th>Fat</th><th>Carbs</th></tr>"
@@ -50,7 +64,6 @@ class Calendar(HTMLCalendar):
             f"</table>"
         )
 
-        # Sprawdzenie, czy to dzisiejsza data
         highlight_class = "current-day" if datetime(self.year, self.month, day).date() == self.today else ""
 
         return (
@@ -59,28 +72,29 @@ class Calendar(HTMLCalendar):
             f"<span class='date'>{day}</span>"
             f"<button id='add-meal-btn' type='button' class='add-meal-btn' data-bs-toggle='modal' data-bs-target='#mealModal' data-date='{self.year}-{self.month}-{day}'>+</button>"
             f"</div>"
-            f"<ul class='meal-list'>{meal_list}</ul>"  # Dodanie listy posiłków
-            f"{nutrition_table}"  # Dodanie tabeli z wartościami odżywczymi
+            f"<ul class='meal-list'>{meal_list}</ul>"
+            f"{nutrition_table}"
             f"</td>"
         )
 
-    def formatweek(self, theweek, meal_entry):
-        return f"<tr>{''.join(self.formatday(d, meal_entry) for d, _ in theweek)}</tr>"
+    def formatweek(self, theweek, meal_entries, snack_entries):
+        return f"<tr>{''.join(self.formatday(d, meal_entries, snack_entries) for d, _ in theweek)}</tr>"
 
     def formatmonth(self, theyear, themonth, withyear=True):
-        """Generuje tabelę HTML z kalendarzem na dany miesiąc."""
         self.year = theyear
         self.month = themonth
-        meal_entry = MealEntry.objects.filter(date__year=self.year, date__month=self.month)
+        meal_entries = MealEntry.objects.filter(date__year=self.year, date__month=self.month, meal__creator=self.request.user)
+        
+        snack_entries = SnackEntry.objects.filter(date__year=self.year, date__month=self.month)
 
         cal = (
-            f'<table border="0"  cellspacing="2" class="calendar">\n'  # Zmniejszone paddingi
+            f'<table border="0" cellspacing="2" class="calendar">\n'
             f'{self.formatmonthname(self.year, self.month, withyear=withyear)}\n'
             f'{self.formatweekheader()}\n<tbody>\n'
         )
 
         for week in self.monthdays2calendar(self.year, self.month):
-            cal += self.formatweek(week, meal_entry) + "\n"
-        
+            cal += self.formatweek(week, meal_entries, snack_entries) + "\n"
+
         cal += "</tbody>\n</table>\n"
         return cal

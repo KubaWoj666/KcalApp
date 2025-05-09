@@ -1,27 +1,24 @@
-const addMealButton = document.querySelectorAll("#add-meal-btn");
-const dateInput = document.getElementById("id_date")
+const addMealButtons = document.querySelectorAll("#add-meal-btn");
+const mealDateInput = document.getElementById("id_meal_date");
+const snackDateInput = document.getElementById("id_snack_date");
 
+let selectedDate = null;
 
-let selectedDate = 0
+addMealButtons.forEach(button => {
+    button.addEventListener("click", function () {
+        selectedDate = this.getAttribute("data-date");
+        if (!selectedDate) return;
 
-addMealButton.forEach(element => {
-    element.addEventListener("click", function (e) {
-        selectedDate = this.getAttribute("data-date")
-        console.log(selectedDate)
+        let [year, month, day] = selectedDate.split("-");
+        month = month.padStart(2, "0");
+        day = day.padStart(2, "0");
+        const formattedDate = `${year}-${month}-${day}`;
 
-        
-        
-        if (dateInput){
-            let [year, month, day] = selectedDate.split("-");
-            month = month.padStart(2, "0");  // Dodaje zero, jeśli miesiąc ma tylko 1 cyfrę
-            day = day.padStart(2, "0");  // Dodaje zero, jeśli dzień ma tylko 1 cyfrę
+        if (mealDateInput) mealDateInput.value = formattedDate;
+        if (snackDateInput) snackDateInput.value = formattedDate;
 
-            selectedDate = `${year}-${month}-${day}`;
-            dateInput.value = selectedDate;
-            console.log("Ustawiona data:", dateInput.value);  // Sprawdzenie w konsoli
-
-        }
-    })
+        console.log("Ustawiona data:", formattedDate);
+    });
 });
 
 const addMealForm = document.getElementById("add-meal-form")
@@ -79,7 +76,33 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     document.querySelectorAll(".delete-meal-form").forEach((form) => {
-        form.querySelector("[name='csrfmiddlewaretoken']").value = getCSRFToken();
+        // form.querySelector("[name='csrfmiddlewaretoken']").value = getCSRFToken();
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            fetch(this.action, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": getCSRFToken()
+                }
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    this.parentElement.remove();  // Usuwa <li> po usunięciu posiłku
+                    location.reload("Refresh")
+
+                }
+            })
+            .catch((error) => console.error("Error:", error));
+        });
+    });
+
+    document.querySelectorAll(".delete-snack-form").forEach((form) => {
+        // form.querySelector("[name='csrfmiddlewaretoken']").value = getCSRFToken();
 
         form.addEventListener("submit", function (e) {
             e.preventDefault();

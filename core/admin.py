@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Product, Recipe, RecipeProduct, Meal, MealEntry
+from .models import Product, Recipe, RecipeProduct, Meal, MealEntry, SnackEntry
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = [ "id",  "creator", "name", "kcal", "protein", "fat", "carbs"]
@@ -30,11 +30,19 @@ class MealEntryAdmin(admin.ModelAdmin):
     def meal_creator(self, obj):
         return obj.meal.creator
 
+class SnackEntryAdmin(admin.ModelAdmin):
+    list_display = ["id", "product", "product_creator", "product_id", "grams"]
 
+    def product_id(self, obj):
+        return obj.product.id
+    def product_creator(self, obj):
+        return obj.product.creator
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(RecipeProduct)
 admin.site.register(Meal, MealAdmin)
 admin.site.register(MealEntry, MealEntryAdmin)
+admin.site.register(SnackEntry, SnackEntryAdmin)
+
 

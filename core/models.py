@@ -79,17 +79,13 @@ class Meal(models.Model):
         return self.recipe.name
     
 
-class MealEntry(models.Model):
-    meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+
+class AbstractEntry(models.Model):
+    user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, null=True)
     date = models.DateField()
-    portions = models.PositiveBigIntegerField(default=1)
 
     class Meta:
-        verbose_name = "Meal entry"
-        verbose_name_plural = "Meal entry"
-
-    def __str__(self):
-        return self.meal.recipe.name
+        abstract = True
     
     def get_year(self):
         if self.date_field:
@@ -101,7 +97,58 @@ class MealEntry(models.Model):
             return self.date.month  # To działa poprawnie
         return None 
     
+class MealEntry(AbstractEntry):
+    meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+    portions = models.PositiveBigIntegerField(default=1)
+    
+    class Meta:
+        verbose_name = "Meal entry"
+        verbose_name_plural = "Meal entry"
+
+    def __str__(self):
+        return self.meal.recipe.name
+    
+    
+    
     @property
     def get_html_url(self):
         url = reverse('meal_entry_detail', args=(self.id,))
         return f'<a href="{url}"> {self.meal.recipe.name} </a>'
+
+class SnackEntry(AbstractEntry):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
+    grams = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="grams", null=True, blank=True)
+
+    def __str__(self):
+        return self.product.name
+    
+    
+
+# class MealEntry(models.Model):
+#     meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+#     date = models.DateField()
+#     portions = models.PositiveBigIntegerField(default=1)
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
+#     grams = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="grams", null=True, blank=True)
+
+#     class Meta:
+#         verbose_name = "Meal entry"
+#         verbose_name_plural = "Meal entry"
+
+#     def __str__(self):
+#         return self.meal.recipe.name
+    
+#     def get_year(self):
+#         if self.date_field:
+#             return self.date.year  # To działa poprawnie
+#         return None 
+    
+#     def get_month(self):
+#         if self.date_field:
+#             return self.date.month  # To działa poprawnie
+#         return None 
+    
+#     @property
+#     def get_html_url(self):
+#         url = reverse('meal_entry_detail', args=(self.id,))
+#         return f'<a href="{url}"> {self.meal.recipe.name} </a>'

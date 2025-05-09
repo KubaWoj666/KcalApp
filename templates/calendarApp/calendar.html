@@ -25,39 +25,67 @@
 {{ calendar }}
 
 
-  <!-- MealModal -->
+ <!-- MealModal -->
 <div class="modal fade" id="mealModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="add-meal-form" method="POST"  >
-            {% csrf_token %}
-            <div  id="meal" class="form-group " {% if field.errors %} errors {% endif %} >
-                <label > {{ meal_core_form.meal.label_tag }}</label>
+  <div class="modal-dialog modal-lg"> <!-- zwiększamy szerokość -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Meal</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <!-- Lewa kolumna: Meal form -->
+          <div class="col-md-6 border-end pe-4">
+            <form id="add-meal-form" method="POST">
+              {% csrf_token %}
+              <div id="meal" class="form-group" {% if field.errors %} errors {% endif %}>
+                <label>{{ meal_core_form.meal.label_tag }}</label>
                 {{ meal_core_form.meal.errors }}
-                {% render_field meal_core_form.meal class="form-control border-primary"  name="meal" id="id_meal"%}
-            </div>
-            <div  id="date" class="form-group " {% if field.errors %} errors {% endif %} >
-                <label > {{ meal_core_form.date.label_tag }}</label>
+                {% render_field meal_core_form.meal class="form-control border-primary" name="meal" id="id_meal" %}
+              </div>
+              <div id="date" class="form-group mt-2" {% if field.errors %} errors {% endif %}>
+                <label>{{ meal_core_form.date.label_tag }}</label>
                 {{ meal_core_form.date.errors }}
-                {% render_field meal_core_form.date class="form-control border-primary"  name="date" id="id_date"%}
-            </div>
-            <div  id="portions" class="form-group " {% if field.errors %} errors {% endif %} >
-                <label > {{ meal_core_form.portions.label_tag }}</label>
+                {% render_field meal_core_form.date class="form-control border-primary" name="date" id="id_meal_date" %}
+              </div>
+              <div id="portions" class="form-group mt-2" {% if field.errors %} errors {% endif %}>
+                <label>{{ meal_core_form.portions.label_tag }}</label>
                 {{ meal_core_form.portions.errors }}
-                {% render_field meal_core_form.portions class="form-control border-primary"  name="portions" id="id_portions"%}
-            </div>
-            <button type="submit">Save Meal</button>
-          </form>
+                {% render_field meal_core_form.portions class="form-control border-primary" name="portions" id="id_portions" %}
+              </div>
+              <button type="submit" class="btn btn-success mt-3">Save Meal</button>
+            </form>
+          </div>
+
+          <!-- Prawa kolumna: Add Product -->
+          <div class="col-md-6 ps-4">
+            <form id="add-product-to-meal-form" action="{% url 'add_snack_entry' %}" method="POST">
+              {% csrf_token %}
+              <div id="product" class="form-group" {% if field.errors %} errors {% endif %}>
+                <label>{{ snack_entry_form.product.label_tag }}</label>
+                {{ snack_entry_form.product.errors }}
+                {% render_field snack_entry_form.product class="form-control border-primary" name="product" id="id_product" %}
+              </div>
+              <div id="date" class="form-group mt-2" {% if field.errors %} errors {% endif %}>
+                <label>{{ snack_entry_form.date.label_tag }}</label>
+                {{ snack_entry_form.date.errors }}
+                {% render_field snack_entry_form.date class="form-control border-primary" name="date" id="id_snack_date" %}
+              </div>
+              <div id="grams" class="form-group mt-2" {% if field.errors %} errors {% endif %}>
+                <label>{{ snack_entry_form.grams.label_tag }}</label>
+                {{ snack_entry_form.grams.errors }}
+                {% render_field snack_entry_form.grams class="form-control border-primary" name="grams" id="id_grams" %}
+              </div>
+              <button type="submit" class="btn btn-primary mt-3">Add Product</button>
+            </form>
+          </div>
         </div>
-       
       </div>
     </div>
   </div>
+</div>
+
 
 <script src="{% static 'js/calendar.js' %}"></script>
 {% endblock content%}
