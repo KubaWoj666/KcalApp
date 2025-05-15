@@ -49,7 +49,7 @@ def get_plot(date_from, date_to, data, nutrition=None, df=None):
     plt.ylabel("Grams")
     
     if df is not None and not df.empty:
-        print("fifa")
+        
         plt.plot(dates, kcal, label="Kcal", marker="o")
         plt.plot(dates, protein, label="Protein", marker="o")
         plt.plot(dates, carbs, label="Carbs", marker="o")
@@ -57,7 +57,7 @@ def get_plot(date_from, date_to, data, nutrition=None, df=None):
         plt.legend()
         plt.title("Nutrition over Time")
     if nutrition:
-        print("terefere")
+        
         nutrition_values = [nutrition_data[date].get(nutrition, 0) for date in all_dates]
         plt.plot(dates, nutrition_values, label=nutrition.capitalize(), marker="o")
         plt.legend()
