@@ -144,6 +144,7 @@ def add_snack_entry(request):
     product = get_object_or_404(Product, id=product.id)
 
     snack_obj = SnackEntry.objects.create(user=request.user, product=product, grams=grams, date=date)
+    print(snack_obj)
     snack_obj.save()
     print("4")
     return redirect("calendar")
