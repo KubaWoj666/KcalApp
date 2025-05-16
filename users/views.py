@@ -1,9 +1,9 @@
 import datetime
 
+from django_htmx.http import HttpResponseClientRefresh
 from django.shortcuts import  get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils import timezone
-from django.views.decorators.http import require_POST
+
 
 
 from allauth.account.adapter import DefaultAccountAdapter
@@ -11,9 +11,10 @@ from allauth.account.views import SignupView
 
 from core.models import Recipe
 
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, WeighEntryForm
 from .models import UserAccount
 from .utils import aggregate_nutrition
+
 
  
 class MyAccountAdapter(DefaultAccountAdapter):
@@ -53,8 +54,9 @@ def finish_profile_create(request, pk):
 
 
 def profile(request, pk):
-    user = get_object_or_404(UserAccount, pk=request.user.id)
+    user = get_object_or_404(UserAccount, id=pk)
     recipes = Recipe.objects.filter(creator=user)
+    form = WeighEntryForm(user=user)
 
     # Aggregate nutrition data for today
     daily_nutrition = aggregate_nutrition(user, today=datetime.date.today())
@@ -75,9 +77,17 @@ def profile(request, pk):
     # Aggregate nutrition data for the previous week
     last_week_nutrition = aggregate_nutrition(user, date_from=monday_of_last_week, date_to=monday_of_this_week)
 
+    if request.method == "POST":
+        form = WeighEntryForm(request.POST or None, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect("profile", user.id)
+
+
     context = {
         "user": user,
         "recipes": recipes,
+        "form": form,
         "daily": daily_nutrition,  
         "current_week": current_week_nutrition,
         "last_week": last_week_nutrition    

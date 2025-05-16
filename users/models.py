@@ -84,3 +84,5 @@ class WeightEntry(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.weight} kg on {self.date}"
+
+    
