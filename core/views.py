@@ -21,7 +21,7 @@ def is_ajax(request):
 
 def home_view(request):
     user = request.user
-    recipes = Recipe.objects.all()
+    recipes = Recipe.objects.filter(creator=user)
     request.session.pop("current_recipe_id", None)  
 
     context = {
