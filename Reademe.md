@@ -52,7 +52,27 @@
 
 ## 📊 Sample Screenshots
 
-You can add some screenshots here to showcase the app interface and functionality.
+### Home Page view
+
+<p align="center">
+  <img src="static/screenshots/mein_logout.png" alt="Home Page Logged Out" width="45%" style="margin-right: 10px;">
+  <img src="static/screenshots/main_login.png" alt="Home Page Logged In" width="45%">
+</p>
+    
+<p align="center">
+  <img src="static/screenshots/create_recipe.png" alt="Home Page Logged Out" width="45%" style="margin-right: 10px;">
+  <img src="static/screenshots/create_product.png" alt="Home Page Logged In" width="45%">
+</p>
+
+<p align="center">
+  <img src="static/screenshots/login_register.png" alt="Home Page Logged Out" width="45%" style="margin-right: 10px;">
+  <img src="static/screenshots/profile.png" alt="Home Page Logged In" width="45%">
+</p>
+
+<p align="center">
+  <img src="static/screenshots/cal.png" alt="Home Page Logged Out" width="45%" style="margin-right: 10px;">
+  <img src="static/screenshots/plan_meal.png" alt="Home Page Logged In" width="45%">
+</p>
 
 ## 📬 Contact
 
