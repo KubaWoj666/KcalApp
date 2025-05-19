@@ -17,7 +17,6 @@ addMealButtons.forEach(button => {
         if (mealDateInput) mealDateInput.value = formattedDate;
         if (snackDateInput) snackDateInput.value = formattedDate;
 
-        console.log("Ustawiona data:", formattedDate);
     });
 });
 
@@ -44,7 +43,6 @@ addMealForm.addEventListener("submit", function (e){
         data: fd,
 
         success: function(response){
-            console.log(response)
             if (response.message){
                 alert(response.message)
             }
@@ -52,7 +50,6 @@ addMealForm.addEventListener("submit", function (e){
         },
 
         error: function(error){
-            console.log(error)
         },
         cache: false,
         contentType: false,

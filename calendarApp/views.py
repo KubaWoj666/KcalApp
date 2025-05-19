@@ -1,25 +1,17 @@
-
-from datetime import datetime
 import calendar
+from datetime import  datetime, timedelta
+
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
-
-
-from django.views import generic
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.safestring import mark_safe
-from datetime import datetime, timedelta, date
-from django.shortcuts import get_object_or_404
 from django.utils.timezone import make_aware
+from django.views import generic
 from django.views.decorators.http import require_POST
-from django_htmx.http import HttpResponseClientRefresh
 
-
-
-
-from .forms import  MealForm, SnackEntryForm
+from core.models import Meal, MealEntry, Product, SnackEntry
+from .forms import MealForm, SnackEntryForm
 from .utils import Calendar
 
-from core.models import Recipe, Product, Meal, MealEntry, SnackEntry
 
 
 
@@ -38,10 +30,7 @@ class CalendarView(generic.ListView):
         context['prev_month'] = prev_month(d)
         context['next_month'] = next_month(d)
 
-        # context["recipes"] = Recipe.objects.all()
         context["products"] = Product.objects.filter(creator=self.request.user)
-
-        # context["meals"] = Meal.objects.all()
 
         context["meal_core_form"] = MealForm(creator=self.request.user)
         context["snack_entry_form"] = SnackEntryForm(creator=self.request.user)
@@ -129,24 +118,18 @@ def delete_meal_entry(request):
 
 @require_POST
 def add_snack_entry(request):
-    print("1")
     user = request.user
     form = SnackEntryForm(request.POST or None, creator=user)
-    print("2")
-    if form.is_valid():
-        
+
+    if form.is_valid():    
         product = form.cleaned_data.get("product")
         grams = form.cleaned_data.get("grams")
         date = form.cleaned_data.get("date")
-        print( "results", product.id, grams, date)
-    else:
-        print(form.errors)
+    
     product = get_object_or_404(Product, id=product.id)
 
     snack_obj = SnackEntry.objects.create(user=request.user, product=product, grams=grams, date=date)
-    print(snack_obj)
     snack_obj.save()
-    print("4")
     return redirect("calendar")
 
 @require_POST
@@ -154,6 +137,4 @@ def delete_snack_entry(request):
     snack_id = request.POST.get("snack_id")
     snack_entry_obj = get_object_or_404(SnackEntry, id=snack_id)
     snack_entry_obj.delete()
-    print("snack_id")
-
     return JsonResponse({"success": True})

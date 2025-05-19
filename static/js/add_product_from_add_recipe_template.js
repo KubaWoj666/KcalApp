@@ -23,12 +23,10 @@ productForm.addEventListener("submit", function (e) {
         dataType: "json",
 
         success: function (response) {
-            console.log(response.success)
             if(response.success == true){
                 updateProductDropdownList(response.new_product)
                 $('#exampleModal').modal('hide');
             }else{
-                console.log(response.message)
                 alert.style.display = ""
                 message.textContent = response.message
 

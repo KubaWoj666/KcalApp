@@ -1,10 +1,7 @@
 import datetime
 
-from django_htmx.http import HttpResponseClientRefresh
-from django.shortcuts import  get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-
-
 
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.views import SignupView
@@ -16,6 +13,7 @@ from .models import UserAccount
 from .utils import aggregate_nutrition
 
 
+
  
 class MyAccountAdapter(DefaultAccountAdapter):
 
@@ -24,21 +22,19 @@ class MyAccountAdapter(DefaultAccountAdapter):
 
 
 class CustomSignupView(SignupView):
+
     def form_valid(self, form):
         response = super().form_valid(form)
         user = self.user
         return redirect("profile_create", pk=user.id)
     
 
-
 def finish_profile_create(request, pk):
     user = get_object_or_404(UserAccount, id=pk)
     form = CustomUserCreationForm()
 
     if request.method == "POST":
-        print("post")
         form = CustomUserCreationForm(request.POST or None, instance=user)
-        print(form.errors)
         if form.is_valid():
             form.save()
             return redirect("profile", pk=user.id)

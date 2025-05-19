@@ -1,6 +1,6 @@
 
 from django.db.models import Sum, F
-from core.models import Recipe, MealEntry, SnackEntry
+from core.models import MealEntry, SnackEntry
 
 def calculate_snack_totals(snacks):
     """

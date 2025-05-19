@@ -21,7 +21,7 @@ class MealForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("creator", None)
         super(MealForm, self).__init__(*args, **kwargs)
-        # Modyfikacja etykiet opcji w polu 'meal'
+        
         self.fields['meal'].queryset = Meal.objects.filter(creator=user)
         self.fields['meal'].label_from_instance = self.get_meal_label
 

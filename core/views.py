@@ -1,20 +1,19 @@
+from decimal import Decimal, InvalidOperation
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.db.utils import IntegrityError
+from django.http import JsonResponse, Http404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-from django.http import Http404, JsonResponse, HttpResponse
-from django.shortcuts import get_object_or_404
+from django_htmx.http import HttpResponseClientRefresh
 
 from .models import Product, Recipe, RecipeProduct, Meal, MealEntry
-from .forms import ProductForm, RecipeProductForm, RecipeNameForm, RecipeGramsEditForm, AddProductToRecipeForm
-
-from django_htmx.http import HttpResponseClientRefresh
-from django.db.utils import IntegrityError
-from decimal import Decimal
-
-import json
-
-
-
+from .forms import (
+    ProductForm,
+    RecipeProductForm,
+    RecipeNameForm,
+    RecipeGramsEditForm,
+    AddProductToRecipeForm
+)
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
@@ -61,6 +60,7 @@ def add_and_fetch_product(request):
 
     return render(request, "core/add_product.html", context)
 
+
 def product_detail(request, pk):
     user = request.user
     product = Product.objects.get(id=pk, creator=user)
@@ -70,7 +70,6 @@ def product_detail(request, pk):
         form = ProductForm(request.POST or None, instance=product)
         if form.is_valid():
             form.save()
-            print("POST")
 
     context = {
         "product": product,
@@ -80,8 +79,15 @@ def product_detail(request, pk):
 
     return render(request, "core/product_detail.html", context)
 
+
 #Recipe detail View
 def recipe_detail(request, pk):
+    """
+    Displays and handles interactions with a specific recipe, including:
+    - Updating recipe name
+    - Editing ingredient amounts (grams)
+    - Showing calculated totals and existing ingredients
+    """
     user = request.user
     add_product_form = AddProductToRecipeForm(creator=user)
     product_form = ProductForm()
@@ -108,7 +114,7 @@ def recipe_detail(request, pk):
             else:
                 grams_edit_form.add_error("grams", "Product not found")       
         else:
-            message = "wpisałeś ujemną bądź za duą liczbę"
+            message = "Invalid value"
         
     #POST request for update recipe name 
     if request.method == "POST":
@@ -358,10 +364,6 @@ def create_meal(request):
         nutrition = request.POST.getlist("nutrition[]")
         num_of_portions = request.POST.get("num_of_portions")
         infinite_portions = request.POST.get("infinite_portions")
-
-
-        print(recipe_id, nutrition, num_of_portions, infinite_portions)
-
       
         if not (recipe_id and nutrition and num_of_portions and infinite_portions):
             return JsonResponse({"success": False, "error": "Missing required fields"})
@@ -388,7 +390,6 @@ def create_meal(request):
             )
         
         else:
-
             meal = Meal.objects.create(
                 creator=user,
                 recipe=recipe,
@@ -400,7 +401,6 @@ def create_meal(request):
                 available_portions=num_of_portions,
                 infinite_portions=False
             )
-
 
         meal.save()
 
@@ -420,8 +420,6 @@ def meal_entry_detail(request, pk):
 
     recipe = meal_entry.meal.recipe
     product_recipe = RecipeProduct.objects.filter(recipe=recipe)
-    print(product_recipe)
-
 
     context = {
         "meal_entry": meal_entry,

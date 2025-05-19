@@ -35,7 +35,7 @@
             {% for product in products %}
             
             <tr >
-                <td><a href="{% url 'product_detail' product.id %}">{{ product.product }}</a></td>
+                <td><a href="{% url 'product_detail' product.product.id %}">{{ product.product }}</a></td>
                 <td class="table_data">{{ product.grams }}g 
                     <form hx-post="{% url 'recipe_detail' pk=recipe.id %}" hx-swap="none" hx-push-url="false">
                         {% csrf_token %}
@@ -49,14 +49,11 @@
                         </h1> -->
 
                         <div  id="grams" class="form-group " {% if field.errors %} errors {% endif %} >
-                            <!-- <label > {{ grams_edit_form.grams.label_tag }}</label> -->
                             {{ grams_edit_form.grams.errors }}
                             {% render_field grams_edit_form.grams class="form-control border-primary w-50"   name="grams" id="id_name"%}
                             
                         </div>
                             
-                        <!-- <input class="grams-input" type="number" step="1" name="product-grams" value="{{product.grams}}"> -->
-                        <!-- <button type="submit" class="product-grams-edit-button"><i style="font-size:15px; margin-left:10px" class="fa-solid fa-pencil"></i></button> -->
                     </form>
                     <button 
                         name="delete-button"

@@ -173,7 +173,6 @@ mealForm.addEventListener("submit", function (e) {
             alert(response.success ? response.message : response.error);
         },
         error: function(response) {
-            console.log("ERROR");
         }
     });
 });
