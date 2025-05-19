@@ -6,7 +6,8 @@
 {% endblock css %}
 
 {% block content %}
-    <h1 class="title">Twoje najnowsze przepisy</h1>
+{% if user.is_authenticated %}
+    <h1 class="title">Your Recipes</h1>
 
     <div class="recipes-container">
         {% for recipe in recipes %}
@@ -17,4 +18,12 @@
             </a>
         {% endfor %}
     </div>
+    {% else %}
+    <div class="d-flex gap-2">
+        <a href="{% url 'account_login' %}" class="btn btn-forest">Login</a>
+        <a href="{% url 'account_signup' %}" class="btn btn-outline-forest">Sign Up</a>
+      </div>
+      
+      
+    {%endif%}
 {% endblock content %}

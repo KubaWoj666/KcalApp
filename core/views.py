@@ -21,13 +21,16 @@ def is_ajax(request):
 
 def home_view(request):
     user = request.user
-    recipes = Recipe.objects.filter(creator=user)
-    request.session.pop("current_recipe_id", None)  
+    recipes = []
+
+    if user.is_authenticated:
+        recipes = Recipe.objects.filter(creator=user)
+
+    request.session.pop("current_recipe_id", None)
 
     context = {
         "recipes": recipes,
         "user": user
-
     }
     return render(request, "core/home.html", context)
 

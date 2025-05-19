@@ -21,6 +21,7 @@
 <body>
 
     <!-- 🌟 MENU UŻYTKOWNIKA -->
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div id="container">
             <a class="navbar-brand" href="{% url 'home' %}">Meal Prep</a>
@@ -28,8 +29,11 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
+                
                 <div>
+                    
                     <ul class="navbar-nav me-auto">
+                        {% if user.is_authenticated %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'add_product' %}">Add Product</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'add_recipe' %}">Create Recipe</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'plan_meal' %}">Plan Meal</a></li>
@@ -38,7 +42,7 @@
                 </div>
                 <div>
                     <ul class="navbar-nav">
-                        {% if user.is_authenticated %}
+                        
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-user"></i> {{ user.name|default:user.email }}
