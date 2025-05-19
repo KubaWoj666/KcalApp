@@ -66,7 +66,7 @@ class RecipeGramsEditForm(forms.Form):
             print("DEBUG: Pole grams jest puste, więc walidacja Django zablokowała dalszą walidację")
             return cleaned_data  
 
-        if grams > 1000:
+        if grams > 10000:
             print("DEBUG: Dodano błąd maksymalnej gramatury!")
             self.add_error("grams", "❌ Maksymalna gramatura to 10 000 g!")
 
@@ -85,6 +85,7 @@ class AddProductToRecipeForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("creator", None)
+        print("useer", user)
         super().__init__(*args, **kwargs)
 
         if user:

@@ -23,13 +23,13 @@
 
             <h5 class="mt-3">Recipe Ingredients</h5>
             <ul class="list-group">
-                {% for product in products %}
+                {% for product in product_recipe %}
                     <li class="list-group-item">
                         <strong>{{ product.name }}</strong> - 
-                        {{ product.kcal }} kcal / 100g, 
-                        {{ product.protein }}g protein, 
-                        {{ product.fat }}g fat, 
-                        {{ product.carbs }}g carbs
+                        {{ product }} 
+                        {{ product.protein }}
+                        {{ product.fat }} 
+                        {{ product.carbs }}
                     </li>
                 {% empty %}
                     <li class="list-group-item">No products found.</li>

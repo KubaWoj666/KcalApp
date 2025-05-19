@@ -1,329 +1,179 @@
-const recipesButtons = document.querySelectorAll(".recipe-btn")
-const clickedButton = document.activeElement;
-const recipeInfo = document.getElementById("recipe-info")
-const recipeIngredients = document.getElementById("recipe-ingredients")
-const selectedRecipeName = document.getElementById("selected-recipe-name")
-const recipeTotals = document.getElementById("recipe-totals")
-const portionInput = document.getElementById("portion-input")
-const portionTotals = document.getElementById("portion-totals")
-const mealForm = document.getElementById("meal-form")
-const tablePortionTotalsWithExtraIngredient = document.getElementById("portion-totals-with-extra-ingredient")
-const extraIngredientsList = document.getElementById("ingredient-list")
+// DOM Elements
+const recipesButtons = document.querySelectorAll(".recipe-btn");
+const recipeInfo = document.getElementById("recipe-info");
+const recipeIngredients = document.getElementById("recipe-ingredients");
+const selectedRecipeName = document.getElementById("selected-recipe-name");
+const recipeTotals = document.getElementById("recipe-totals");
+const portionInput = document.getElementById("portion-input");
+const portionTotals = document.getElementById("portion-totals");
+const mealForm = document.getElementById("meal-form");
+const tablePortionTotalsWithExtraIngredient = document.getElementById("portion-totals-with-extra-ingredient");
+const extraIngredientsList = document.getElementById("ingredient-list");
 
-
-let recipeId = 0
-
-// const actionValue = clickedButton;
- 
-
+let recipeId = 0;
 
 recipesButtons.forEach(button => {
     button.addEventListener("click", function (e) {
-        e.preventDefault()
-        while(recipeIngredients.firstChild) recipeIngredients.removeChild(recipeIngredients.firstChild);
-        while(recipeTotals.firstChild) recipeTotals.removeChild(recipeTotals.firstChild);
-        while(portionTotals.firstChild) portionTotals.removeChild(portionTotals.firstChild);
-        while(tablePortionTotalsWithExtraIngredient.firstChild) tablePortionTotalsWithExtraIngredient.removeChild(tablePortionTotalsWithExtraIngredient.firstChild);
-        while(extraIngredientsList.firstChild) extraIngredientsList.removeChild(extraIngredientsList.firstChild);
+        e.preventDefault();
+        [recipeIngredients, recipeTotals, portionTotals, tablePortionTotalsWithExtraIngredient, extraIngredientsList].forEach(el => el.innerHTML = "");
 
+        portionInput.value = 0;
+        recipeId = e.target.getAttribute("data-recipe-id");
 
-        
-        // recipeId = button.getAttribute("data-recipe-id")
-
-        portionInput.value = 0
-        const actionValue = e.target;
-        recipeId = actionValue.getAttribute("data-recipe-id")
-        
         $.ajax({
             type: "GET",
             url: `/get-recipe/${recipeId}`,
-    
             success: function(response) {
-                // console.log(response.totals)
-                
-    
-                Object.entries(response.totals).forEach(([key, value]) => {
-                    console.log(`${key}: ${value}`);
-                });
-    
-                // recipe name
-                selectedRecipeName.textContent = response.name
-    
-                // product list 
-                recipeInfo.style.display = ""
-                mealForm.style.display = ""
-                
+                selectedRecipeName.textContent = response.name;
+                recipeInfo.style.display = "";
+                mealForm.style.display = "";
 
-                response.ingredients.forEach(product => {   
-                    li = document.createElement('li')
-                    recipeIngredients.appendChild(li)
-                    li.textContent = product.product + ": " + product.grams+"g"
-                });
-                
-                Object.entries(response.totals).forEach(([key, value]) => {
-                    td = document.createElement("td")
-                    recipeTotals.appendChild(td)
-                    td.textContent = value
-                    
+                response.ingredients.forEach(product => {
+                    const li = document.createElement('li');
+                    li.textContent = `${product.product}: ${product.grams}g`;
+                    recipeIngredients.appendChild(li);
                 });
 
-                calculatePortion(response)
-                
-    
+                Object.entries(response.totals).forEach(([key, value]) => {
+                    const td = document.createElement("td");
+                    td.textContent = value;
+                    recipeTotals.appendChild(td);
+                });
+
+                calculatePortion(response);
             }
-        })
-    
-
-    })
-});
-
-
-clickedButton.addEventListener("click", function (e) {
-
-})
-
-
-
-function calculatePortion(response) {
-    const portionInput = document.getElementById("portion-input");
-    const portionTotals = document.getElementById("portion-totals");
-    const infinitePortions = document.getElementById("infinite-portions-checkbox");
-
-    // Event listener dla checkboxa
-    infinitePortions.addEventListener("change", function () {
-        while (portionTotals.firstChild) portionTotals.removeChild(portionTotals.firstChild);
-        
-        // Jeśli checkbox jest zaznaczony, resetujemy input do wartości domyślnej
-        if (infinitePortions.checked) {
-            portionInput.value = 0;
-        }
-
-        let portion = 1;
-        Object.entries(response.totals).forEach(([key, value]) => {
-            let td = document.createElement("td");
-            portionTotals.appendChild(td);
-            td.id = "portion-table-data";
-            td.textContent = (value / portion).toFixed(2);
         });
     });
+});
 
-    // Event listener dla inputa porcji
+function calculatePortion(response) {
+    const infinitePortions = document.getElementById("infinite-portions-checkbox");
+
+    infinitePortions.addEventListener("change", function () {
+        portionTotals.innerHTML = "";
+        if (infinitePortions.checked) portionInput.value = 0;
+
+        Object.entries(response.totals).forEach(([key, value]) => {
+            const td = document.createElement("td");
+            td.id = "portion-table-data";
+            td.textContent = (value / 1).toFixed(2);
+            portionTotals.appendChild(td);
+        });
+        updateTotalsWithExtras();
+    });
+
     portionInput.addEventListener("input", function () {
-        while (portionTotals.firstChild) portionTotals.removeChild(portionTotals.firstChild);
-        
-        // Odznaczamy checkbox, gdy użytkownik ręcznie zmienia ilość porcji
+        portionTotals.innerHTML = "";
         infinitePortions.checked = false;
 
-        let portion = portionInput.value;
+        let portion = parseFloat(portionInput.value);
+        if (!portion || portion <= 0) portion = 1;
+
         Object.entries(response.totals).forEach(([key, value]) => {
-            let td = document.createElement("td");
-            portionTotals.appendChild(td);
+            const td = document.createElement("td");
             td.id = "portion-table-data";
             td.textContent = (value / portion).toFixed(2);
+            portionTotals.appendChild(td);
         });
-    
-
-
-   
-
-        const liExtra = document.getElementById("li-extra-ingredient")
-        console.log(liExtra)
-    })
+        updateTotalsWithExtras();
+    });
 }
 
-
-
-
-// Pobieranie elementów
+// Extra Ingredients Logic
 const extraIngredientSelect = document.getElementById("extra-ingredient");
 const extraGramsInput = document.getElementById("extra-grams");
 const addExtraButton = document.getElementById("add-extra");
-const ingredientList = document.getElementById("ingredient-list");
-const tableTotalsWithExtra = document.getElementById("portion-totals-with-extra-ingredient")
 
-// Obsługa kliknięcia "Add"
 addExtraButton.addEventListener("click", function () {
-    // Pobranie wybranego produktu
     const selectedOption = extraIngredientSelect.options[extraIngredientSelect.selectedIndex];
+    if (!selectedOption.value) return alert("Wybierz składnik!");
 
-    if (document.getElementById("li-extra-ingredient")) {
-        alert("❌ Możesz dodać tylko jeden dodatkowy składnik!");
-        return;
-    }
-    // Sprawdzenie, czy wybrano produkt
-    if (!selectedOption.value) {
-        alert("Wybierz składnik!");
-        return;
-    }
-
-    // Pobranie wartości z inputa
     const grams = parseFloat(extraGramsInput.value);
+    if (isNaN(grams) || grams <= 0) return alert("Podaj poprawną ilość gramów!");
 
-    if (isNaN(grams) || grams <= 0) {
-        alert("Podaj poprawną ilość gramów!");
-        return;
-    }
-
-    // Pobranie wartości odżywczych
     const productName = selectedOption.textContent;
-    const kcalPer100g = parseFloat(selectedOption.getAttribute("data-kcal"));
-    const proteinPer100g = parseFloat(selectedOption.getAttribute("data-protein"));
-    const fatPer100g = parseFloat(selectedOption.getAttribute("data-fat"));
-    const carbsPer100g = parseFloat(selectedOption.getAttribute("data-carbs"));
-    
+    const kcal = ((parseFloat(selectedOption.getAttribute("data-kcal")) / 100) * grams).toFixed(2);
+    const protein = ((parseFloat(selectedOption.getAttribute("data-protein")) / 100) * grams).toFixed(2);
+    const fat = ((parseFloat(selectedOption.getAttribute("data-fat")) / 100) * grams).toFixed(2);
+    const carbs = ((parseFloat(selectedOption.getAttribute("data-carbs")) / 100) * grams).toFixed(2);
 
-    // Przeliczenie wartości na podaną ilość gramów
-    const kcal = ((kcalPer100g / 100) * grams).toFixed(2);
-    const protein = ((proteinPer100g / 100) * grams).toFixed(2);
-    const fat = ((fatPer100g / 100) * grams).toFixed(2);
-    const carbs = ((carbsPer100g / 100) * grams).toFixed(2);
-    
-    
-    // Dodanie produktu do listy
     const li = document.createElement("li");
-    li.id = "li-extra-ingredient"
-    li.innerHTML = `<strong>${productName}</strong>: ${grams}g - ${kcal} kcal, ${protein}g protein, ${fat}g fat, ${carbs}g carbs <button id="extra-ingredient-delete-button"><i style="color: red;" class="fa-solid fa-x"></i></button>`;
-    ingredientList.appendChild(li);
+    li.classList.add("li-extra-ingredient");
+    li.innerHTML = `<strong>${productName}</strong>: ${grams}g - ${kcal} kcal, ${protein}g protein, ${fat}g fat, ${carbs}g carbs <button class="extra-ingredient-delete-button"><i style="color: red;" class="fa-solid fa-x"></i></button>`;
+    extraIngredientsList.appendChild(li);
 
-
-    const portionTableData = document.querySelectorAll("#portion-table-data")
-    const values = [kcal, protein, fat, carbs]; // Tablica wartości
-
-    portionTableData.forEach((element, index) => {
-        if (index < values.length) { // Upewniamy się, że nie wychodzimy poza zakres
-            td = document.createElement("td")
-            td.id = "table-data-extras"
-            tableTotalsWithExtra.appendChild(td)
-            td.textContent = (parseFloat(element.textContent) + parseFloat(values[index])).toFixed(2);
-        }
-    });
-
+    updateTotalsWithExtras();
 });
 
 document.addEventListener("click", function (e) {
-    // Sprawdzamy, czy kliknięty element to przycisk usuwania
-    if (e.target.closest("#extra-ingredient-delete-button")) {
+    if (e.target.closest(".extra-ingredient-delete-button")) {
         e.preventDefault();
-
-        
-        const liToRemove = e.target.closest("li"); // Pobieramy najbliższy element <li>
-        
+        const liToRemove = e.target.closest("li");
         if (liToRemove) {
-            const liText = liToRemove.textContent; // Pobieramy tekst przed usunięciem
-            liToRemove.remove(); // Usuwamy element z listy
-            updateTableAfterRemoval(liText); // Przekazujemy usunięty tekst do funkcji
+            liToRemove.remove();
+            updateTotalsWithExtras();
         }
     }
 });
 
-function updateTableAfterRemoval(liText) {
-    const portionTableWithExtra = document.getElementById("portion-totals-with-extra-ingredient")
-    while(portionTableWithExtra.firstChild) portionTableWithExtra.removeChild(portionTableWithExtra.firstChild);
+function updateTotalsWithExtras() {
+    const baseValues = document.querySelectorAll("#portion-table-data");
+    const extraList = document.querySelectorAll(".li-extra-ingredient");
 
-    // const portionTableData = document.querySelectorAll("#table-data-extras");
-//     console.log("Porcja przed aktualizacją:", portionTableData);
-
-
-    
-
-//     // Zerujemy wartości do odjęcia
-//     let valuesToSubtract = [0, 0, 0, 0]; // kcal, protein, fat, carbs
-
-//     // Wyszukujemy wartości do odjęcia na podstawie tekstu usuniętego składnika
-//     const values = liText.match(/([\d\.]+) kcal, ([\d\.]+)g protein, ([\d\.]+)g fat, ([\d\.]+)g carbs/);
-//     console.log("OPAAAA")
-//     console.log(values)
-//     if (values) {
-//         console.log("Parsowane wartości:", values);
-
-//         // Pobieramy wartości jako liczby i zapisujemy w tablicy
-//         valuesToSubtract[0] = parseFloat(values[1]) || 0; // kcal
-//         valuesToSubtract[1] = parseFloat(values[2]) || 0; // protein
-//         valuesToSubtract[2] = parseFloat(values[3]) || 0; // fat
-//         valuesToSubtract[3] = parseFloat(values[4]) || 0; // carbs
-//     }
-
-//     console.log("Odejmowane wartości:", valuesToSubtract);
-
-//     // Aktualizacja wartości w tabeli
-//     portionTableData.forEach((td, index) => {
-//         console.log(td.textContent)
-//         const currentValue = parseFloat(td.textContent) || 0;
-//         console.log(currentValue)
-//         td.textContent = (currentValue - valuesToSubtract[index]).toFixed(2);
-//         console.log(td.textContent)
-//     });
-
-//     console.log("Tabela po aktualizacji:", portionTableData);
-}
-
-
-
-const saveMealBtn = document.getElementById("save-meal")
-csrf = mealForm.querySelector("[name='csrfmiddlewaretoken']")
-
-
-mealForm.addEventListener("submit", function (e) {
-    e.preventDefault()
-    const numOfPortions = document.getElementById("portion-input")
-    const infinitePortions = document.getElementById("infinite-portions-checkbox")
-    const mealName = document.getElementById("selected-recipe-name")
-    const tableDataWithExtra = document.querySelectorAll("#table-data-extras")
-    const portionTable = document.querySelectorAll("#portion-table-data")
-
-   
-    const fd = new FormData()
-
-    fd.append("recipe_id", recipeId);
-    console.log(numOfPortions.value)
-    console.log(infinitePortions.checked)
-
-   
-
-    
-    fd.append("infinite_portions", infinitePortions.checked)
-    fd.append("num_of_portions", numOfPortions.value)
-
-    
-    fd.append("csrfmiddlewaretoken", csrf.value);
-    fd.append("meal_name", mealName.textContent )
-
-    tableDataWithExtra.forEach(element => {
-        fd.append("nutrition[]", element.textContent)
-        
+    const totals = [0, 0, 0, 0]; // kcal, protein, fat, carbs
+    extraList.forEach(li => {
+        const match = li.textContent.match(/([\d\.]+) kcal, ([\d\.]+)g protein, ([\d\.]+)g fat, ([\d\.]+)g carbs/);
+        if (match) {
+            totals[0] += parseFloat(match[1]);
+            totals[1] += parseFloat(match[2]);
+            totals[2] += parseFloat(match[3]);
+            totals[3] += parseFloat(match[4]);
+        }
     });
 
-    if (tableDataWithExtra.length === 0){
-        portionTable.forEach(element => {
-            fd.append("nutrition[]", element.textContent)
-            
-        });
-    }
+    tablePortionTotalsWithExtraIngredient.innerHTML = "";
+    baseValues.forEach((cell, i) => {
+        const td = document.createElement("td");
+        td.id = "table-data-extras";
+        td.textContent = (parseFloat(cell.textContent) + totals[i]).toFixed(2);
+        tablePortionTotalsWithExtraIngredient.appendChild(td);
+    });
+}
 
+// Form submission
+const saveMealBtn = document.getElementById("save-meal");
+const csrf = mealForm.querySelector("[name='csrfmiddlewaretoken']");
+
+mealForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const numOfPortions = document.getElementById("portion-input");
+    const infinitePortions = document.getElementById("infinite-portions-checkbox");
+    const mealName = document.getElementById("selected-recipe-name");
+    const tableDataWithExtra = document.querySelectorAll("#table-data-extras");
+    const portionTable = document.querySelectorAll("#portion-table-data");
+
+    const fd = new FormData();
+    fd.append("recipe_id", recipeId);
+    fd.append("infinite_portions", infinitePortions.checked);
+    fd.append("num_of_portions", numOfPortions.value);
+    fd.append("csrfmiddlewaretoken", csrf.value);
+    fd.append("meal_name", mealName.textContent);
+
+    const source = tableDataWithExtra.length > 0 ? tableDataWithExtra : portionTable;
+    source.forEach(el => fd.append("nutrition[]", el.textContent));
 
     $.ajax({
         type: "POST",
         url: "/save-meal/",
         data: fd,
-        processData: false,  
+        processData: false,
         contentType: false,
-
-        success: function(response){
-            if (response.success ){
-                alert(response.message)
-            }else{
-                alert(response.error)
-            }
-            
+        success: function(response) {
+            alert(response.success ? response.message : response.error);
         },
-
-        error: function(response){
-            console.log("ERROR")
+        error: function(response) {
+            console.log("ERROR");
         }
-
-        
-    })
-    
-
-})
-
+    });
+});

@@ -83,7 +83,7 @@ def product_detail(request, pk):
 #Recipe detail View
 def recipe_detail(request, pk):
     user = request.user
-    add_product_form = AddProductToRecipeForm()
+    add_product_form = AddProductToRecipeForm(creator=user)
     product_form = ProductForm()
     form = RecipeNameForm()
     grams_edit_form = RecipeGramsEditForm()
@@ -151,7 +151,7 @@ def add_product_to_recipe(request, pk):
     """Adding product to recipe"""
     user = request.user
     recipe = get_object_or_404(Recipe, id=pk)
-    form = AddProductToRecipeForm()
+    form = AddProductToRecipeForm(creator=user)
     products = RecipeProduct.objects.filter(recipe=recipe)
     grams_edit_form = RecipeGramsEditForm()
 
@@ -418,10 +418,15 @@ def meal_entry_detail(request, pk):
     else:
         products = []  
 
+    recipe = meal_entry.meal.recipe
+    product_recipe = RecipeProduct.objects.filter(recipe=recipe)
+    print(product_recipe)
+
 
     context = {
         "meal_entry": meal_entry,
-        "products": products
+        "products": products,
+        "product_recipe": product_recipe
     }
 
     return render(request, "core/meal_entry_detail.html", context)
