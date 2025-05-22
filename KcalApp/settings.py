@@ -86,6 +86,8 @@ MIDDLEWARE = [
     
     'django_htmx.middleware.HtmxMiddleware',
     "allauth.account.middleware.AccountMiddleware", #Allauth middleware:
+
+    'core.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'KcalApp.urls'
