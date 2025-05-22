@@ -5,6 +5,13 @@ from django.urls import reverse
 import re
 EXEMPT_URLS = [
     r'^/$',  # strona główna
+    r'^/accounts/login/?$',         # logowanie
+    r'^/accounts/signup/?$',        # rejestracja
+    r'^/accounts/logout/?$',        # wylogowanie
+    r'^/admin/?$',                  # panel admina
+    r'^/accounts/social/login/',           # krok 1 – rozpoczęcie logowania przez Google
+    r'^/accounts/google/login/?$',         # krok 2 – kliknięcie w Google login
+    r'^/accounts/google/login/callback/?$'
 ]
 
 class LoginRequiredMiddleware:
